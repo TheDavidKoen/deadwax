@@ -10,10 +10,11 @@
     "url": "git+https://github.com/TheDavidKoen/deadwax.git"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.9"
   },
   "scripts": {
-    "raw-call": "node --env-file=.env scripts/raw-call.js",
+    "raw-call": "node --env-file-if-exists=.env scripts/raw-call.js",
+    "models": "node --env-file-if-exists=.env scripts/raw-call.js --list",
     "test": "node --test",
     "evals": "node evals/runner.js"
   },
