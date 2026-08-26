@@ -1,0 +1,28 @@
+{
+  "name": "deadwax",
+  "version": "0.0.1",
+  "description": "An agentic music librarian over a personal listening history, with a deterministic validator and a measured eval suite.",
+  "type": "module",
+  "license": "MIT",
+  "author": "David Koen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheDavidKoen/deadwax.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "raw-call": "node --env-file=.env scripts/raw-call.js",
+    "test": "node --test",
+    "evals": "node evals/runner.js"
+  },
+  "keywords": [
+    "llm",
+    "agents",
+    "evals",
+    "rag",
+    "mcp",
+    "observability"
+  ]
+}

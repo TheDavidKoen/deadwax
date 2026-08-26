@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Parse every JavaScript file
+        run: git ls-files '*.js' '*.mjs' | xargs -r -n1 node --check
+
+      - name: Unit tests
+        run: |
+          if git ls-files '*.test.js' | grep -q .; then
+            npm test
+          else
+            echo "No test files yet - unit tests land at stage 2."
+          fi
+
+      - name: Evals
+        run: |
+          if [ -f evals/runner.js ]; then
+            npm run evals -- --fixtures-only
+          else
+            echo "No eval runner yet - the eval harness lands at stage 5."
+          fi
