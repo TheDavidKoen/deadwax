@@ -4,11 +4,11 @@
 
 ## Stage
 
-<!-- e.g. Stage 3 - First tool loop. Link the PLAN.md acceptance criteria. -->
+<!-- e.g. Stage 3 - First tool loop. State that stage's acceptance criteria. -->
 
 ## Acceptance criteria
 
-- [ ] The stage's "Done when" condition in PLAN.md is met
+- [ ] The stage's "Done when" condition is met
 
 ## Behavioural change
 
