@@ -1,13 +1,26 @@
-node_modules/
 .env
 .env.local
 *.log
-npm-debug.log*
+
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 data/*.db
 data/*.db-journal
 data/*.sqlite
 
+web/node_modules/
 web/dist/
 web/.astro/
 .wrangler/

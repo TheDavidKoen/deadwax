@@ -2,6 +2,8 @@
 
 Status: Accepted
 Date: 2026-08-26
+Amended: 2026-08-27 by [0003](0003-python-for-the-agent.md), implementation language only.
+The decision itself is unchanged.
 
 ## Context
 
@@ -23,7 +25,7 @@ author knows what the quickstart is doing.
 ## Decision
 
 Embeddings are computed at build time and written to a JSON file that ships with the repo.
-Search is exhaustive cosine similarity in plain JavaScript. There is no vector database and
+Search is exhaustive cosine similarity in plain Python. There is no vector database and
 no vector index.
 
 Retrieval quality is evaluated, not assumed — Stage 9 requires eval cases for both "the

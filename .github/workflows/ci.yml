@@ -19,32 +19,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.1
         with:
-          node-version: 22
-          cache: npm
+          python-version: "3.13"
+          enable-cache: true
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f uv.lock ]; then
+            uv sync --locked
+          else
+            echo "No uv.lock committed yet - run 'uv lock' locally and commit it."
+            uv sync
+          fi
 
-      - name: Parse every JavaScript file
-        run: git ls-files '*.js' '*.mjs' | xargs -r -n1 node --check
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
 
       - name: Unit tests
         run: |
-          if git ls-files '*.test.js' | grep -q .; then
-            npm test
+          if git ls-files 'tests/test_*.py' | grep -q .; then
+            uv run pytest
           else
             echo "No test files yet - unit tests land at stage 2."
           fi
 
       - name: Evals
         run: |
-          if [ -f evals/runner.js ]; then
-            npm run evals -- --fixtures-only
+          if [ -f evals/runner.py ]; then
+            uv run evals/runner.py --fixtures-only
           else
             echo "No eval runner yet - the eval harness lands at stage 5."
           fi
