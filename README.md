@@ -61,7 +61,7 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 ## Build progress
 
 Twelve stages, four phases. One branch and one squash-merged PR per stage, so the history
-reads as the build actually happened. Full plan in [PLAN.md](PLAN.md).
+reads as the build actually happened.
 
 | Phase | Stage | Status |
 | --- | --- | --- |
