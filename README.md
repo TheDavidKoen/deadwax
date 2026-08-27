@@ -17,13 +17,13 @@ second run.
 
 The system is split down one line: **the model never computes.** It interprets language,
 chooses tools, and composes prose. Every arithmetic operation, threshold check and
-constraint adjudication happens in plain JavaScript that has no idea an LLM exists. When a
-playlist violates a constraint, the validator does not return `false` — it returns a
+constraint adjudication happens in plain Python that has no idea an LLM exists. When a
+playlist violates a constraint, the validator does not return `False` — it returns a
 violation code, the offending track ids, and a concrete remedy, which is the only reason
 an automated repair loop can work at all.
 
 Feasibility is checked *before* generation. If a brief cannot be satisfied, the system
-says so. It never pads, substitutes, or silently degrades — `status: 'infeasible'` is a
+says so. It never pads, substitutes, or silently degrades — `status="infeasible"` is a
 correct outcome with its own eval cases.
 
 ## Architecture rules
@@ -49,14 +49,19 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 
 | Layer | Choice |
 | --- | --- |
-| Runtime | Node.js, ESM, vanilla JavaScript |
-| Agent | Vercel AI SDK |
+| Language | Python 3.13 |
+| Toolchain | uv for dependencies and Python itself, ruff for lint and format, pytest |
+| Agent | LangChain, introduced at stage 3 and not before |
 | Model | Google Gemini Flash, with OpenRouter fallback |
-| Store | SQLite (better-sqlite3), local file |
-| Retrieval | Build-time embeddings, cosine similarity in plain JS — [no vector database](docs/adr/0002-no-vector-database.md) |
+| Store | SQLite via the `sqlite3` standard library module |
+| Retrieval | Build-time embeddings, cosine similarity in plain Python — [no vector database](docs/adr/0002-no-vector-database.md) |
 | Tracing | Langfuse |
 | Interop | Model Context Protocol server |
-| Frontend | Astro on Cloudflare Pages |
+| Frontend | Astro on Cloudflare Pages — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
+
+Stages 0 through 2 use the standard library only — no framework, no SDK, no dependencies.
+The raw HTTP call is written by hand before any abstraction is introduced, so that when a
+framework misrepresents what it is doing, the difference is visible.
 
 ## Build progress
 
@@ -81,20 +86,47 @@ reads as the build actually happened.
 
 ## Running it
 
-Requires Node 22 or newer — the scripts use the built-in `--env-file` flag and native
-`fetch`, so there is no `dotenv` dependency.
+You need [uv](https://docs.astral.sh/uv/). It installs and manages Python itself, so it is
+the only prerequisite.
 
 ```bash
-cp .env.example .env
+winget install --id=astral-sh.uv -e
 ```
 
-Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey),
-then:
+Then, from the repository root:
 
 ```bash
-npm install
-npm run raw-call
+uv sync
 ```
+
+That creates a virtual environment, installs the pinned Python version from
+`.python-version`, and installs the project.
+
+Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey):
+
+```bash
+copy .env.example .env
+```
+
+Paste the key after `GEMINI_API_KEY=`. Then see which models your key can reach, since
+free-tier catalogues change without notice:
+
+```bash
+uv run scripts/raw_call.py --list
+```
+
+Put one of those ids in `.env` as `GEMINI_MODEL`, and make the call:
+
+```bash
+uv run scripts/raw_call.py
+```
+
+It prints the full request and the full response before extracting the answer. That is the
+point of the script — the shapes are worth knowing before a framework hides them.
+
+Your account's actual rate limits are shown at
+[aistudio.google.com/rate-limit](https://aistudio.google.com/rate-limit); Google no longer
+publishes a per-model free-tier table in the API documentation.
 
 ## Evaluation
 

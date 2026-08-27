@@ -2,6 +2,8 @@
 
 Status: Accepted
 Date: 2026-08-26
+Amended: 2026-08-27 by [0003](0003-python-for-the-agent.md), implementation language only.
+The decision itself is unchanged.
 
 ## Context
 
@@ -24,7 +26,7 @@ guarantee for a rule that has a definite answer.
 ## Decision
 
 All arithmetic, threshold evaluation, rule checking and constraint adjudication happens in
-deterministic JavaScript. The model interprets natural language, selects tools, and
+deterministic Python. The model interprets natural language, selects tools, and
 composes prose. It does nothing else.
 
 Concretely:
