@@ -44,6 +44,9 @@ Consequences for the staged build:
   framework earns its place rather than merely being present.
 - The site consumes the evaluation results as static JSON produced by the Python build. The
   two languages meet at a file, not at an API.
+- The live demo runs Python on a Hugging Face Space. Cloudflare Pages serves static files
+  and has no Python runtime, so the JavaScript side renders and links but never executes
+  anything. Everything that runs is Python.
 
 Both prior records stand. [0001](0001-the-model-never-computes.md) said the model never
 computes; the deterministic half is now Python rather than JavaScript, and the decision is
