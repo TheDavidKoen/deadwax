@@ -57,7 +57,8 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 | Retrieval | Build-time embeddings, cosine similarity in plain Python — [no vector database](docs/adr/0002-no-vector-database.md) |
 | Tracing | Langfuse |
 | Interop | Model Context Protocol server |
-| Frontend | Astro on Cloudflare Pages — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
+| Site | Astro on Cloudflare Pages, static — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
+| Live demo | Gradio on a Hugging Face Space, free CPU tier |
 
 Stages 0 through 2 use the standard library only — no framework, no SDK, no dependencies.
 The raw HTTP call is written by hand before any abstraction is introduced, so that when a
