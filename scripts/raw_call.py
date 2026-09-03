@@ -112,7 +112,7 @@ def generate(api_key: str, model: str, prompt: str) -> None:
 
     body = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 256},
+        "generationConfig": {"temperature": 0.7, "maxOutputTokens": 2048},
     }
 
     heading("Request")
