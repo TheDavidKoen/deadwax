@@ -44,7 +44,7 @@ jobs:
 
       - name: Unit tests
         run: |
-          if git ls-files 'tests/test_*.py' | grep -q .; then
+          if git ls-files 'tests/*.py' | grep -q .; then
             uv run pytest
           else
             echo "No test files yet - unit tests land at stage 2."
