@@ -73,8 +73,8 @@ reads as the build actually happened.
 | --- | --- | --- |
 | A · Ground | 0 · One raw call | ✅ |
 | A · Ground | 1 · Fixture data | ✅ |
-| A · Ground | 2 · Deterministic core | 🔨 in progress |
-| B · The agent | 3 · First tool loop | ⬜ |
+| A · Ground | 2 · Deterministic core | ✅ |
+| B · The agent | 3 · First tool loop | 🔨 in progress |
 | B · The agent | 4 · Measure the wobble | ⬜ |
 | B · The agent | 5 · Eval harness | ⬜ `v0.5` |
 | C · Making it good | 6 · Repair loop | ⬜ |
