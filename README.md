@@ -71,8 +71,8 @@ reads as the build actually happened.
 
 | Phase | Stage | Status |
 | --- | --- | --- |
-| A · Ground | 0 · One raw call | 🔨 in progress |
-| A · Ground | 1 · Fixture data | ⬜ |
+| A · Ground | 0 · One raw call | ✅ |
+| A · Ground | 1 · Fixture data | 🔨 in progress |
 | A · Ground | 2 · Deterministic core | ⬜ |
 | B · The agent | 3 · First tool loop | ⬜ |
 | B · The agent | 4 · Measure the wobble | ⬜ |
