@@ -6,7 +6,10 @@ readme = "README.md"
 requires-python = ">=3.13"
 authors = [{ name = "David Koen" }]
 keywords = ["llm", "agents", "evals", "rag", "mcp", "observability"]
-dependencies = []
+dependencies = [
+    "langchain>=1",
+    "langchain-google-genai>=4",
+]
 
 [dependency-groups]
 dev = [
