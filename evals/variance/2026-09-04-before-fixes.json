@@ -1,0 +1,311 @@
+{
+  "query": "build me a 30 minute playlist of ambient tracks, nothing over 8 minutes",
+  "model": "gemini-3.5-flash-lite",
+  "runs": 2,
+  "recorded_at": "2026-09-04T08:03:51.317083+00:00",
+  "summary": {
+    "observed": 2,
+    "converged": 1,
+    "did_not_converge": 1,
+    "no_data": 0,
+    "distinct_tool_sequences": 2,
+    "tool_sequences": [
+      {
+        "sequence": [
+          "query_library",
+          "validate_playlist",
+          "validate_playlist"
+        ],
+        "count": 1
+      },
+      {
+        "sequence": [
+          "query_library",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist"
+        ],
+        "count": 1
+      }
+    ],
+    "tool_call_count_range": [
+      3,
+      10
+    ],
+    "distinct_track_selections": 2,
+    "track_selections": [
+      {
+        "track_ids": [
+          "t011",
+          "t018",
+          "t019",
+          "t021",
+          "t032",
+          "t033",
+          "t058"
+        ],
+        "count": 1
+      },
+      {
+        "track_ids": [
+          "t011",
+          "t021",
+          "t032",
+          "t033",
+          "t058"
+        ],
+        "count": 1
+      }
+    ],
+    "distinct_answers": 1,
+    "token_range": [
+      6887,
+      24907
+    ],
+    "token_mean": 15897
+  },
+  "results": [
+    {
+      "run": 1,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 28977,
+      "requests": 4,
+      "tool_calls": [
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "max_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ],
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "min_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033",
+              "t058"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 6887,
+      "final_text": "Here is your 30-minute ambient playlist (track count: 7, total duration: 33:28), with no tracks over 8 minutes:\n\n1. **Warszawa** by David Bowie (6:23)\n2. **Roygbiv** by Boards of Canada (2:31)\n3. **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n4. **Olson** by Boards of Canada (1:31)\n5. **Rhubarb** by Aphex Twin (7:41)\n6. **Xtal** by Aphex Twin (4:51)\n7. **Heavy Water/I'd Rather Be Sleeping** by Grouper (3:31)"
+    },
+    {
+      "run": 2,
+      "error": "GraphRecursionError: Recursion limit of 20 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/GRAPH_RECURSION_LIMIT",
+      "converged": false,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 62474,
+      "requests": 11,
+      "tool_calls": [
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "max_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033",
+              "t057",
+              "t058"
+            ],
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1800000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033",
+              "t057",
+              "t058"
+            ],
+            "min_total_duration_ms": 1800000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "track_ids": [
+              "t019",
+              "t032",
+              "t058"
+            ],
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1800000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1800000,
+            "max_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t019",
+              "t032",
+              "t058",
+              "t079"
+            ],
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t019",
+              "t032",
+              "t058",
+              "t079",
+              "t033"
+            ],
+            "max_total_duration_ms": 1800000,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t032",
+              "t058",
+              "t079",
+              "t033",
+              "t021"
+            ],
+            "min_total_duration_ms": 1800000,
+            "max_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_total_duration_ms": 1800000,
+            "min_total_duration_ms": 1800000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t032",
+              "t058"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_total_duration_ms": 1800000,
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1800000,
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t032",
+              "t033",
+              "t058"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t032",
+              "t033",
+              "t058",
+              "t021"
+            ],
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 1800000,
+            "min_total_duration_ms": 1800000
+          }
+        }
+      ],
+      "total_tokens": 24907,
+      "final_text": "{\"ok\": false, \"total_duration_ms\": 1437000, \"total_duration_display\": \"23:57\", \"track_count\": 5, \"violations\": [{\"code\": \"DURATION_UNDER\", \"track_ids\": [\"t011\", \"t032\", \"t033\", \"t058\", \"t021\"], \"remedy\": \"add 363000 ms\", \"adjust_by\": 363000}], \"soft_scores\": []}"
+    }
+  ]
+}

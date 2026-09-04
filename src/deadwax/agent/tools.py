@@ -1,17 +1,22 @@
 from langchain_core.tools import tool
 
-from deadwax.data import TRACKS
-from deadwax.domain.constraints import Constraints
-from deadwax.domain.validator import validate
+from deadwax.data import TRACKS, Track
+from deadwax.domain import Constraints, validator
+
+MIN_DURATION_WINDOW_MS = 120_000
 
 
-def _as_dict(track) -> dict:
+def _display(duration_ms: int) -> str:
+    return f"{duration_ms // 60_000}:{duration_ms // 1000 % 60:02d}"
+
+
+def _as_dict(track: Track) -> dict:
     return {
         "id": track.id,
         "name": track.name,
         "artists": list(track.artists),
         "duration_ms": track.duration_ms,
-        "duration_display": f"{track.duration_ms // 60_000}:{track.duration_ms // 1000 % 60:02d}",
+        "duration_display": _display(track.duration_ms),
         "genres": list(track.genres),
         "release_year": track.release_year,
         "last_played_at": track.last_played_at.isoformat() if track.last_played_at else None,
@@ -82,7 +87,24 @@ def validate_playlist(
     if unknown:
         return {"ok": False, "unknown_track_ids": unknown}
 
-    result = validate(
+    if min_total_duration_ms is not None and max_total_duration_ms is not None:
+        window = max_total_duration_ms - min_total_duration_ms
+        if window < MIN_DURATION_WINDOW_MS:
+            target = (min_total_duration_ms + max_total_duration_ms) // 2
+            half = MIN_DURATION_WINDOW_MS // 2
+            return {
+                "ok": False,
+                "invalid_constraints": (
+                    f"the duration window is {window} ms wide, which is too narrow to satisfy"
+                ),
+                "remedy": (
+                    f"a duration request is approximate: retry with "
+                    f"min_total_duration_ms={target - half} and "
+                    f"max_total_duration_ms={target + half}"
+                ),
+            }
+
+    result = validator.validate(
         [by_id[i] for i in track_ids],
         Constraints(
             min_total_duration_ms=min_total_duration_ms,
@@ -96,7 +118,7 @@ def validate_playlist(
     return {
         "ok": result.ok,
         "total_duration_ms": total_ms,
-        "total_duration_display": f"{total_ms // 60_000}:{total_ms // 1000 % 60:02d}",
+        "total_duration_display": _display(total_ms),
         "track_count": len(track_ids),
         "violations": [
             {
@@ -111,4 +133,43 @@ def validate_playlist(
             {"name": s.name, "score": s.score, "provenance": s.provenance}
             for s in result.soft_scores
         ],
+    }
+
+
+@tool
+def check_feasibility(
+    min_total_duration_ms: int | None = None,
+    max_track_duration_ms: int | None = None,
+    max_tracks_per_artist: int | None = None,
+    required_genres: list[str] | None = None,
+    released_before: int | None = None,
+    released_after: int | None = None,
+) -> dict:
+    """Check whether a playlist brief is possible at all, before choosing any tracks.
+
+    Call this first, before query_library, whenever the user asks for a playlist with
+    constraints. If feasible is false the brief cannot be satisfied by this library:
+    tell the user which constraint fails and stop. Do not build a playlist anyway, do
+    not relax the constraint yourself, and do not try alternative track combinations.
+
+    max_achievable_ms is the longest playlist the library can produce under these
+    constraints. Compare it against what the user asked for when explaining a refusal.
+    """
+    outcome = validator.check_feasibility(
+        TRACKS,
+        Constraints(
+            min_total_duration_ms=min_total_duration_ms,
+            max_track_duration_ms=max_track_duration_ms,
+            max_tracks_per_artist=max_tracks_per_artist,
+            required_genres=tuple(required_genres or ()),
+            released_before=released_before,
+            released_after=released_after,
+        ),
+    )
+    return {
+        "feasible": outcome.feasible,
+        "reason": outcome.reason.value if outcome.reason else None,
+        "candidate_count": outcome.candidate_count,
+        "max_achievable_ms": outcome.max_achievable_ms,
+        "requested_min_ms": outcome.requested_min_ms,
     }

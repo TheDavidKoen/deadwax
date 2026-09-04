@@ -75,8 +75,8 @@ reads as the build actually happened.
 | A · Ground | 1 · Fixture data | ✅ |
 | A · Ground | 2 · Deterministic core | ✅ |
 | B · The agent | 3 · First tool loop | ✅ |
-| B · The agent | 4 · Measure the wobble | 🔨 in progress |
-| B · The agent | 5 · Eval harness | ⬜ `v0.5` |
+| B · The agent | 4 · Measure the wobble | ✅ |
+| B · The agent | 5 · Eval harness | 🔨 in progress `v0.5` |
 | C · Making it good | 6 · Repair loop | ⬜ |
 | C · Making it good | 7 · Adversarial cases | ⬜ |
 | C · Making it good | 8 · Tracing | ⬜ |
@@ -109,25 +109,38 @@ Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/ap
 copy .env.example .env
 ```
 
-Paste the key after `GEMINI_API_KEY=`. Then see which models your key can reach, since
-free-tier catalogues change without notice:
+Paste the key after `GEMINI_API_KEY=`, then ask it something:
 
 ```bash
-uv run scripts/raw_call.py --list
+uv run deadwax "build me a 30 minute playlist of ambient tracks, nothing over 8 minutes"
 ```
 
-Put one of those ids in `.env` as `GEMINI_MODEL`, and make the call:
+Tool calls and the model that served the request are printed to stderr, so the answer alone
+pipes cleanly. `--model` pins a single model instead of falling back through the free-tier
+list.
 
-```bash
-uv run scripts/raw_call.py
-```
-
-It prints the full request and the full response before extracting the answer. That is the
-point of the script — the shapes are worth knowing before a framework hides them.
-
-Your account's actual rate limits are shown at
+Free-tier limits are per model and differ by an order of magnitude between them. Your
+account's actual numbers are at
 [aistudio.google.com/rate-limit](https://aistudio.google.com/rate-limit); Google no longer
-publishes a per-model free-tier table in the API documentation.
+publishes a per-model table in the API documentation.
+
+## Measuring variance
+
+The same question does not produce the same trajectory twice, so the repository ships the
+harness that measures it rather than asserting a number:
+
+```bash
+uv run scripts/measure_variance.py "build me a 30 minute playlist" --runs 10
+```
+
+It pins one model — a sample spread across models measures the models, not the system —
+throttles below the provider's per-minute ceiling, and writes every tool call and answer to
+`evals/variance/` after each run rather than at the end, so an interrupted sample keeps what
+it has.
+
+Two recorded samples are committed as the evidence behind
+[ADR 0004](docs/adr/0004-agent-convergence-is-enforced-in-code.md):
+`2026-09-04-before-fixes.json` and `2026-09-04-after-fixes.json`.
 
 ## Evaluation
 
