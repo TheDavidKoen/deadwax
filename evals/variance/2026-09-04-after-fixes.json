@@ -1,0 +1,816 @@
+{
+  "query": "build me a 30 minute playlist of ambient tracks, nothing over 8 minutes",
+  "model": "gemini-3.5-flash-lite",
+  "runs": 10,
+  "recorded_at": "2026-09-04T08:23:12.580083+00:00",
+  "summary": {
+    "observed": 10,
+    "converged": 10,
+    "did_not_converge": 0,
+    "no_data": 0,
+    "distinct_tool_sequences": 3,
+    "tool_sequences": [
+      {
+        "sequence": [
+          "check_feasibility",
+          "query_library",
+          "validate_playlist",
+          "validate_playlist"
+        ],
+        "count": 6
+      },
+      {
+        "sequence": [
+          "check_feasibility",
+          "query_library",
+          "validate_playlist",
+          "validate_playlist",
+          "validate_playlist"
+        ],
+        "count": 3
+      },
+      {
+        "sequence": [
+          "check_feasibility",
+          "query_library",
+          "validate_playlist"
+        ],
+        "count": 1
+      }
+    ],
+    "tool_call_count_range": [
+      3,
+      5
+    ],
+    "distinct_track_selections": 2,
+    "track_selections": [
+      {
+        "track_ids": [
+          "t011",
+          "t018",
+          "t019",
+          "t021",
+          "t032",
+          "t033"
+        ],
+        "count": 7
+      },
+      {
+        "track_ids": [
+          "t011",
+          "t018",
+          "t019",
+          "t021",
+          "t033",
+          "t058",
+          "t079"
+        ],
+        "count": 3
+      }
+    ],
+    "distinct_answers": 9,
+    "token_range": [
+      7152,
+      12956
+    ],
+    "token_mean": 10535
+  },
+  "results": [
+    {
+      "run": 1,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 33135,
+      "requests": 6,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "max_tracks_per_artist": null,
+            "released_before": null,
+            "max_track_duration_ms": 480000,
+            "required_genres": [
+              "ambient"
+            ],
+            "released_after": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "max_duration_ms": 480000,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1740000,
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033"
+            ],
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058"
+            ],
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058",
+              "t079"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 12930,
+      "final_text": "Here is your 30-minute ambient playlist (7 tracks, 32:03 total duration), with no tracks over 8 minutes:\n\n1. **Warszawa** by David Bowie (6:23)\n2. **Roygbiv** by Boards of Canada (2:31)\n3. **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n4. **Olson** by Boards of Canada (1:31)\n5. **Xtal** by Aphex Twin (4:51)\n6. **Heavy Water/I'd Rather Be Sleeping** by Grouper (3:31)\n7. **Aguirre I** by Popol Vuh (6:16)"
+    },
+    {
+      "run": 2,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 31125,
+      "requests": 6,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "released_after": null,
+            "max_track_duration_ms": 480000,
+            "released_before": null,
+            "max_tracks_per_artist": null,
+            "min_total_duration_ms": 1740000
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "limit": 20,
+            "max_duration_ms": 480000,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033"
+            ],
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1740000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058"
+            ],
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000,
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058",
+              "t079"
+            ],
+            "max_total_duration_ms": 2100000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000
+          }
+        }
+      ],
+      "total_tokens": 12956,
+      "final_text": "Here is your 30-minute ambient playlist (totaling 32:03 across 7 tracks, with no track exceeding 8 minutes):\n\n1. **Warszawa** by David Bowie (6:23)\n2. **Roygbiv** by Boards of Canada (2:31)\n3. **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n4. **Olson** by Boards of Canada (1:31)\n5. **Xtal** by Aphex Twin (4:51)\n6. **Heavy Water/I'd Rather Be Sleeping** by Grouper (3:31)\n7. **Aguirre I** by Popol Vuh (6:16)"
+    },
+    {
+      "run": 3,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 26365,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "released_before": null,
+            "max_tracks_per_artist": null,
+            "min_total_duration_ms": 1740000,
+            "max_track_duration_ms": 480000,
+            "required_genres": [
+              "ambient"
+            ],
+            "released_after": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "limit": 30,
+            "max_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032"
+            ],
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ],
+            "max_total_duration_ms": 2100000,
+            "min_total_duration_ms": 1740000,
+            "max_track_duration_ms": 480000
+          }
+        }
+      ],
+      "total_tokens": 9906,
+      "final_text": "Here is your 30-minute ambient playlist (no tracks over 8 minutes):\n\n- **Warszawa** by David Bowie (6:23)\n- **Roygbiv** by Boards of Canada (2:31)\n- **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n- **Olson** by Boards of Canada (1:31)\n- **Rhubarb** by Aphex Twin (7:41)\n- **Xtal** by Aphex Twin (4:51)\n\n**Playlist length:** 6 tracks, 29:57"
+    },
+    {
+      "run": 4,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 58597,
+      "requests": 6,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "max_tracks_per_artist": null,
+            "max_track_duration_ms": 480000,
+            "released_after": null,
+            "released_before": null,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "max_duration_ms": 480000,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058"
+            ],
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t058",
+              "t079"
+            ],
+            "max_track_duration_ms": 480000
+          }
+        }
+      ],
+      "total_tokens": 12925,
+      "final_text": "Here is your 30-minute ambient playlist (no tracks over 8 minutes):\n\n- **Warszawa** by David Bowie (6:23)\n- **Roygbiv** by Boards of Canada (2:31)\n- **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n- **Olson** by Boards of Canada (1:31)\n- **Xtal** by Aphex Twin (4:51)\n- **Heavy Water/I'd Rather Be Sleeping** by Grouper (3:31)\n- **Aguirre I** by Popol Vuh (6:16)\n\n**Playlist length:** 7 tracks, 32:03"
+    },
+    {
+      "run": 5,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 26050,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "released_before": null,
+            "min_total_duration_ms": 1680000,
+            "released_after": null,
+            "max_tracks_per_artist": null,
+            "max_track_duration_ms": 480000,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "limit": 20,
+            "max_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1680000,
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032"
+            ],
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "min_total_duration_ms": 1680000,
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 9906,
+      "final_text": "Here is your 30-minute ambient playlist (no tracks over 8 minutes):\n\n- **Warszawa** by David Bowie (6:23)\n- **Roygbiv** by Boards of Canada (2:31)\n- **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n- **Olson** by Boards of Canada (1:31)\n- **Rhubarb** by Aphex Twin (7:41)\n- **Xtal** by Aphex Twin (4:51)\n\n**Playlist length:** 6 tracks, 29:57"
+    },
+    {
+      "run": 6,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 21187,
+      "requests": 4,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "max_tracks_per_artist": null,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000,
+            "released_after": null,
+            "min_total_duration_ms": 1620000,
+            "released_before": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "max_duration_ms": 480000,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1620000,
+            "required_genres": [
+              "ambient"
+            ],
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 7152,
+      "final_text": "Here is your 30-minute ambient playlist (no tracks over 8 minutes):\n\n* **Warszawa** by David Bowie (6:23)\n* **Roygbiv** by Boards of Canada (2:31)\n* **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n* **Olson** by Boards of Canada (1:31)\n* **Rhubarb** by Aphex Twin (7:41)\n* **Xtal** by Aphex Twin (4:51)\n\n**Playlist length:** 6 tracks, 29:57"
+    },
+    {
+      "run": 7,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 26204,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "max_track_duration_ms": 480000,
+            "released_after": null,
+            "required_genres": [
+              "ambient"
+            ],
+            "released_before": null,
+            "max_tracks_per_artist": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "max_duration_ms": 480000,
+            "limit": 20,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021"
+            ],
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ],
+            "min_total_duration_ms": 1740000,
+            "max_total_duration_ms": 2100000
+          }
+        }
+      ],
+      "total_tokens": 9871,
+      "final_text": "Here is your 30-minute ambient playlist (no track over 8 minutes):\n\n* **Warszawa** by David Bowie (6:23)\n* **Roygbiv** by Boards of Canada (2:31)\n* **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n* **Olson** by Boards of Canada (1:31)\n* **Rhubarb** by Aphex Twin (7:41)\n* **Xtal** by Aphex Twin (4:51)\n\n**Playlist length:** 6 tracks, 29:57"
+    },
+    {
+      "run": 8,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 31616,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "released_after": null,
+            "min_total_duration_ms": 1740000,
+            "max_tracks_per_artist": null,
+            "max_track_duration_ms": 480000,
+            "released_before": null,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "max_duration_ms": 480000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000,
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_total_duration_ms": 2100000,
+            "max_track_duration_ms": 480000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ],
+            "min_total_duration_ms": 1740000,
+            "required_genres": [
+              "ambient"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 9910,
+      "final_text": "I have built a 30-minute ambient playlist for you, keeping all tracks under 8 minutes.\n\n**Playlist Details:**\n- **Track Count:** 6\n- **Total Duration:** 29:57\n\n**Tracks:**\n1. **Warszawa** by David Bowie (6:23)\n2. **Roygbiv** by Boards of Canada (2:31)\n3. **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n4. **Olson** by Boards of Canada (1:31)\n5. **Rhubarb** by Aphex Twin (7:41)\n6. **Xtal** by Aphex Twin (4:51)"
+    },
+    {
+      "run": 9,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 55757,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "min_total_duration_ms": 1710000,
+            "max_track_duration_ms": 480000,
+            "max_tracks_per_artist": null,
+            "released_before": null,
+            "required_genres": [
+              "ambient"
+            ],
+            "released_after": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "max_duration_ms": 480000,
+            "genre": "ambient"
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "max_track_duration_ms": 480000,
+            "required_genres": [
+              "ambient"
+            ],
+            "min_total_duration_ms": 1710000,
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033"
+            ]
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "max_total_duration_ms": 2100000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t033",
+              "t032"
+            ],
+            "min_total_duration_ms": 1710000,
+            "max_track_duration_ms": 480000
+          }
+        }
+      ],
+      "total_tokens": 9889,
+      "final_text": "Here is your 30-minute ambient playlist (no tracks over 8 minutes):\n\n* **Warszawa** by David Bowie (6:23)\n* **Roygbiv** by Boards of Canada (2:31)\n* **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n* **Olson** by Boards of Canada (1:31)\n* **Xtal** by Aphex Twin (4:51)\n* **Rhubarb** by Aphex Twin (7:41)\n\n**Playlist length:** 6 tracks, total duration **29:57**."
+    },
+    {
+      "run": 10,
+      "error": null,
+      "converged": true,
+      "model": "gemini-3.5-flash-lite",
+      "elapsed_ms": 110366,
+      "requests": 5,
+      "tool_calls": [
+        {
+          "name": "check_feasibility",
+          "args": {
+            "max_tracks_per_artist": null,
+            "required_genres": [
+              "ambient"
+            ],
+            "released_before": null,
+            "max_track_duration_ms": 480000,
+            "min_total_duration_ms": 1620000,
+            "released_after": null
+          }
+        },
+        {
+          "name": "query_library",
+          "args": {
+            "genre": "ambient",
+            "max_duration_ms": 480000,
+            "limit": 20
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "required_genres": [
+              "ambient"
+            ],
+            "min_total_duration_ms": 1620000,
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032"
+            ],
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000
+          }
+        },
+        {
+          "name": "validate_playlist",
+          "args": {
+            "min_total_duration_ms": 1620000,
+            "max_track_duration_ms": 480000,
+            "max_total_duration_ms": 2100000,
+            "required_genres": [
+              "ambient"
+            ],
+            "track_ids": [
+              "t011",
+              "t018",
+              "t019",
+              "t021",
+              "t032",
+              "t033"
+            ]
+          }
+        }
+      ],
+      "total_tokens": 9901,
+      "final_text": "Here is your ambient playlist, featuring 6 tracks with a total duration of 29:57:\n\n1. **Warszawa** by David Bowie (6:23)\n2. **Roygbiv** by Boards of Canada (2:31)\n3. **Everything You Do Is a Balloon** by Boards of Canada (7:00)\n4. **Olson** by Boards of Canada (1:31)\n5. **Rhubarb** by Aphex Twin (7:41)\n6. **Xtal** by Aphex Twin (4:51)"
+    }
+  ]
+}

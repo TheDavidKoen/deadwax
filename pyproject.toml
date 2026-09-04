@@ -11,6 +11,9 @@ dependencies = [
     "langchain-google-genai>=4",
 ]
 
+[project.scripts]
+deadwax = "deadwax.cli:main"
+
 [dependency-groups]
 dev = [
     "pytest>=8.3",

@@ -1,5 +1,6 @@
 import os
 
+from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 FREE_TIER_MODELS = (
@@ -8,6 +9,22 @@ FREE_TIER_MODELS = (
     "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
 )
+
+DEFAULT_REQUESTS_PER_MINUTE = 12
+
+_limiter: InMemoryRateLimiter | None = None
+
+
+def shared_rate_limiter() -> InMemoryRateLimiter:
+    global _limiter
+    if _limiter is None:
+        rpm = int(os.environ.get("DEADWAX_RPM", str(DEFAULT_REQUESTS_PER_MINUTE)))
+        _limiter = InMemoryRateLimiter(
+            requests_per_second=rpm / 60,
+            check_every_n_seconds=0.5,
+            max_bucket_size=1,
+        )
+    return _limiter
 
 
 def _api_key() -> str:
@@ -31,4 +48,5 @@ def build_model(name: str) -> ChatGoogleGenerativeAI:
         temperature=0.0,
         max_output_tokens=2048,
         max_retries=0,
+        rate_limiter=shared_rate_limiter(),
     )
