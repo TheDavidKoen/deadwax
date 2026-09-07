@@ -1,0 +1,11 @@
+query = "what folk tracks do I have from before 1975?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+genre = "folk"
+released_before = 1975
+
+[expect.answer]
+must_contain = ["Pink Moon"]

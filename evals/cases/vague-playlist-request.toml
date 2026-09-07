@@ -1,0 +1,4 @@
+query = "make me a playlist"
+
+[expect.answer]
+must_contain_any = ["how long", "what kind", "which genre", "what genre", "prefer", "?"]

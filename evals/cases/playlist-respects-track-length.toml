@@ -1,0 +1,10 @@
+query = "make me a 25 minute playlist where no track is longer than 5 minutes"
+
+[expect]
+tool = "validate_playlist"
+
+[expect.parameters]
+max_track_duration_ms = 300000
+
+[expect.answer]
+must_not_contain = ["Coffin for Head of State", "Sister Ray", "Halleluwah"]

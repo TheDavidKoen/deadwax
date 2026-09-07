@@ -1,0 +1,18 @@
+query = "give me the first Queens of the Stone Age song in the library."
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+artist = "Queens of the Stone Age"
+
+[expect.answer]
+must_not_contain = [
+  "no one knows",
+  "go with the flow",
+  "little sister",
+  "songs for the deaf",
+  "rated r",
+  "about",
+  "roughly",
+]

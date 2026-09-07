@@ -1,0 +1,8 @@
+query = "how many tracks have I never played?"
+
+[expect]
+tool = "query_library"
+
+[expect.answer]
+must_contain = ["41"]
+must_not_contain = ["about", "roughly", "approximately"]

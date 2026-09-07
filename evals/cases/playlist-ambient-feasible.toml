@@ -1,0 +1,7 @@
+query = "build me a 30 minute playlist of ambient tracks, nothing over 8 minutes"
+
+[expect]
+tool = "check_feasibility"
+
+[expect.answer]
+must_not_contain = ["about", "roughly", "approximately"]
