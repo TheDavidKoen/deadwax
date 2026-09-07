@@ -1,0 +1,11 @@
+query = "what is the name of Sigur Ros's song in the library?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+artist = "Sigur Ros"
+
+[expect.answer]
+must_contain = ["Untitled #1 (Vaka)"]
+must_not_contain = ["about", "roughly"]

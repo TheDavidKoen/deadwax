@@ -1,0 +1,11 @@
+query = "are there any techno songs?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+genre = "techno"
+
+[expect.answer]
+must_contain_any = ["no techno", "0 techno", "aren't any techno", "not have any techno"]
+must_not_contain = ["about", "roughly"]

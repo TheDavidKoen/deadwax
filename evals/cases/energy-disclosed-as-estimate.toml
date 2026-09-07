@@ -1,0 +1,7 @@
+query = "which are the highest energy tracks in my library?"
+
+[expect]
+tool = "query_library"
+
+[expect.answer]
+must_contain_any = ["estimate", "estimated", "inferred", "not measured"]

@@ -1,0 +1,15 @@
+query = "build me a 60 minute playlist of jazz, nothing over 6 minutes"
+
+[expect]
+tool = "check_feasibility"
+
+[expect.answer]
+must_contain_any = [
+  "not feasible",
+  "isn't feasible",
+  "cannot",
+  "can't",
+  "not possible",
+  "not enough",
+]
+must_not_contain = ["here is your playlist", "here's your playlist"]

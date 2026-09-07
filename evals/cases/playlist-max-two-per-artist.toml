@@ -1,0 +1,7 @@
+query = "build me a 40 minute playlist with no more than two tracks by any one artist"
+
+[expect]
+tool = "validate_playlist"
+
+[expect.parameters]
+max_tracks_per_artist = 2

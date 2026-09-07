@@ -1,0 +1,15 @@
+query = "which Radiohead songs do I have?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+artist = "Radiohead"
+
+[expect.answer]
+must_contain = [
+  "Everything in Its Right Place",
+  "Paranoid Android",
+  "Idioteque",
+  "Weird Fishes",
+]

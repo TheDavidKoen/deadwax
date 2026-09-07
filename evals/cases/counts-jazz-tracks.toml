@@ -1,0 +1,11 @@
+query = "how many jazz tracks do I have?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+genre = "jazz"
+
+[expect.answer]
+must_contain = ["9"]
+must_not_contain = ["about", "roughly", "approximately"]

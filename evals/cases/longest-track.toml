@@ -1,0 +1,8 @@
+query = "what is the longest track in my library?"
+
+[expect]
+tool = "query_library"
+
+[expect.answer]
+must_contain = ["Coffin for Head of State"]
+must_not_contain = ["about", "roughly", "approximately"]

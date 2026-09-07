@@ -76,8 +76,8 @@ reads as the build actually happened.
 | A · Ground | 2 · Deterministic core | ✅ |
 | B · The agent | 3 · First tool loop | ✅ |
 | B · The agent | 4 · Measure the wobble | ✅ |
-| B · The agent | 5 · Eval harness | 🔨 in progress `v0.5` |
-| C · Making it good | 6 · Repair loop | ⬜ |
+| B · The agent | 5 · Eval harness | ✅ `v0.5` |
+| C · Making it good | 6 · Repair loop | 🔨 in progress |
 | C · Making it good | 7 · Adversarial cases | ⬜ |
 | C · Making it good | 8 · Tracing | ⬜ |
 | C · Making it good | 9 · Retrieval | ⬜ `v0.9` |
@@ -144,13 +144,45 @@ Two recorded samples are committed as the evidence behind
 
 ## Evaluation
 
-The eval suite lands at Stage 5. Cases are written by hand and are never generated — if
-the same tool writes both the code and the grading, the score means nothing. Scores are
-reported as pass rates across repeated runs, because a single pass on a non-deterministic
-system is an anecdote.
+```bash
+uv run evals/runner.py
+```
 
-Any commit that changes a prompt, a tool description or a model carries before/after eval
-scores in its message.
+15 hand-written cases in `evals/cases/`, each run three times, scored on three dimensions
+separately. Cases are TOML read with `tomllib` — a read-only parser, so nothing in this
+repository can write one. If the same author wrote the code and the grading, the score means
+nothing.
+
+**`v0.5` baseline**, `gemini-3.5-flash-lite` pinned:
+
+| tool selection | parameters | answer content | convergence |
+| --- | --- | --- | --- |
+| 100% | 100% | 93% | 98% |
+
+Two failures are left in deliberately, because a suite where everything passes reports
+nothing:
+
+- **`never-played-count`** — `query_library` has no play-history filter, so the agent cannot
+  answer. It refuses honestly, which is correct behaviour and a correct red.
+- **`playlist-max-two-per-artist`** — one run in three keeps calling tools after the
+  validator has already returned `ok: true`. The
+  [ADR 0004](docs/adr/0004-agent-convergence-is-enforced-in-code.md) defect recurring, since
+  "stop on success" lives only in the prompt. Stage 6 enforces it in code.
+
+The dimensions are scored separately because they fail differently: the right tool with the
+wrong argument is a different bug from the wrong tool, and one number hides which you have.
+Rates, not pass/fail, because a single pass on a system measured to be non-deterministic is
+an anecdote.
+
+Any commit that changes a prompt, a tool description or a model carries before/after scores
+in its message.
+
+```bash
+uv run evals/runner.py --fixtures-only
+```
+
+Validates every case without an API key. This is what CI runs, and it has already caught an
+empty case file and a tool-name typo before either cost a request.
 
 ## Licence
 
