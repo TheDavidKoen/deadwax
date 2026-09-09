@@ -77,8 +77,8 @@ reads as the build actually happened.
 | B · The agent | 3 · First tool loop | ✅ |
 | B · The agent | 4 · Measure the wobble | ✅ |
 | B · The agent | 5 · Eval harness | ✅ `v0.5` |
-| C · Making it good | 6 · Repair loop | 🔨 in progress |
-| C · Making it good | 7 · Adversarial cases | ⬜ |
+| C · Making it good | 6 · Repair loop | ✅ |
+| C · Making it good | 7 · Adversarial cases | 🔨 in progress |
 | C · Making it good | 8 · Tracing | ⬜ |
 | C · Making it good | 9 · Retrieval | ⬜ `v0.9` |
 | D · Ship | 10 · Real data | ⬜ |
@@ -153,21 +153,26 @@ separately. Cases are TOML read with `tomllib` — a read-only parser, so nothin
 repository can write one. If the same author wrote the code and the grading, the score means
 nothing.
 
-**`v0.5` baseline**, `gemini-3.5-flash-lite` pinned:
+`gemini-3.5-flash-lite` pinned, graded by the same case files before and after:
 
-| tool selection | parameters | answer content | convergence |
-| --- | --- | --- | --- |
-| 100% | 100% | 93% | 98% |
+| | tool selection | parameters | answer content | convergence | tokens per sweep |
+| --- | --- | --- | --- | --- | --- |
+| `v0.5` baseline | 100% | 100% | 93% | 98% | 106,118 |
+| stage 6 · repair loop | 100% | 100% | 89% | **100%** | **72,038** |
 
-Two failures are left in deliberately, because a suite where everything passes reports
-nothing:
+Stage 6 took the stop condition out of the system prompt and put it in code — see
+[ADR 0005](docs/adr/0005-the-agent-does-not-decide-when-it-is-finished.md). The case that
+motivated it, `playlist-max-two-per-artist`, went from an average of 6.7 `validate_playlist`
+calls per run to exactly 1, and from 45,106 tokens to 16,889.
 
-- **`never-played-count`** — `query_library` has no play-history filter, so the agent cannot
-  answer. It refuses honestly, which is correct behaviour and a correct red.
-- **`playlist-max-two-per-artist`** — one run in three keeps calling tools after the
-  validator has already returned `ok: true`. The
-  [ADR 0004](docs/adr/0004-agent-convergence-is-enforced-in-code.md) defect recurring, since
-  "stop on success" lives only in the prompt. Stage 6 enforces it in code.
+**Answer content fell, and that is reported rather than explained away.** Three of the five
+failing attempts are `never-played-count`, which is unchanged and correct: `query_library`
+has no play-history filter, so the agent refuses honestly. Of the other two, one is caused by
+this change — the new closing prompt says *"not possible"* where the case accepts
+*"impossible"* — and one is a case that had been passing by chance, on a code path stage 6
+never touches. Both are diagnosed in ADR 0005. Neither is a wrong answer, and neither key was
+adjusted to flatter the result: correcting grading criteria inside the change being graded
+produces a number that cannot be compared to anything.
 
 The dimensions are scored separately because they fail differently: the right tool with the
 wrong argument is a different bug from the wrong tool, and one number hides which you have.

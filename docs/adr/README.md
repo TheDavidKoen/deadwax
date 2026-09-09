@@ -16,4 +16,5 @@ that we changed our mind, and why, is the useful part.
 | [0001](0001-the-model-never-computes.md) | The model never computes | Accepted, amended by 0003 |
 | [0002](0002-no-vector-database.md) | No vector database | Accepted, amended by 0003 |
 | [0003](0003-python-for-the-agent.md) | Python for the agent, JavaScript only for the site | Accepted |
-| [0004](0004-agent-convergence-is-enforced-in-code.md) | Agent convergence is enforced in code, not requested in a prompt | Accepted |
+| [0004](0004-agent-convergence-is-enforced-in-code.md) | Agent convergence is enforced in code, not requested in a prompt | Accepted, extended by 0005 |
+| [0005](0005-the-agent-does-not-decide-when-it-is-finished.md) | The agent does not decide when it is finished | Accepted |

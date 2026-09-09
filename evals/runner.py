@@ -1,8 +1,10 @@
 import argparse
 import json
+import logging
 import os
 import sys
 import tomllib
+import warnings
 from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -15,6 +17,9 @@ from deadwax.config import load_env_file
 CASES_DIR = Path("evals") / "cases"
 RESULTS_DIR = Path("evals") / "results"
 TOOL_NAMES = {tool.name for tool in (check_feasibility, query_library, validate_playlist)}
+
+warnings.filterwarnings("ignore", message="Model .* uses fixed sampling defaults")
+logging.getLogger("google_genai").setLevel(logging.ERROR)
 
 
 @dataclass(frozen=True)
@@ -125,6 +130,7 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
                 "attempt": attempt,
                 "error": None,
                 "converged": result.converged,
+                "stop": answer.stop,
                 "tool": result.tool,
                 "parameters": result.parameters,
                 "answer": result.answer,
