@@ -1,3 +1,4 @@
+import json
 from collections.abc import Sequence
 from typing import Any
 
@@ -26,3 +27,17 @@ def total_tokens(messages: Sequence[Any]) -> int:
         (getattr(message, "usage_metadata", None) or {}).get("total_tokens", 0)
         for message in messages
     )
+
+
+def tool_results(messages: Sequence[Any]) -> list[tuple[str, dict]]:
+    results = []
+    for message in messages:
+        if getattr(message, "type", None) != "tool":
+            continue
+        try:
+            payload = json.loads(message.content)
+        except (TypeError, ValueError):
+            continue
+        if isinstance(payload, dict):
+            results.append((message.name, payload))
+    return results

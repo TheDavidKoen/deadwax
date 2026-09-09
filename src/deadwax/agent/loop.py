@@ -4,7 +4,7 @@ from typing import Any
 from langchain.agents import create_agent
 from langchain_google_genai.chat_models import GoogleRateLimitError
 
-from deadwax.agent import transcript
+from deadwax.agent import repair_loop, transcript
 from deadwax.agent.models import build_model, model_order
 from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
 
@@ -48,6 +48,7 @@ class Answer:
     messages: list[Any]
     exhausted: tuple[str, ...]
     converged: bool
+    stop: repair_loop.Stop | None
     error: str | None
 
     def tool_calls(self) -> list[dict]:
@@ -71,6 +72,7 @@ def ask(question: str, model_name: str | None = None, max_steps: int = MAX_STEPS
 
     for name in candidates:
         messages: list[Any] = []
+        verdict = repair_loop.Verdict()
         try:
             for state in build_agent(name).stream(
                 {"messages": [{"role": "user", "content": question}]},
@@ -78,6 +80,11 @@ def ask(question: str, model_name: str | None = None, max_steps: int = MAX_STEPS
                 stream_mode="values",
             ):
                 messages = state["messages"]
+                verdict = repair_loop.inspect(messages)
+                if verdict.stop is not None:
+                    break
+            if verdict.stop is not None:
+                messages = [*messages, repair_loop.finalise(messages, verdict, name)]
         except GoogleRateLimitError:
             exhausted.append(name)
             continue
@@ -87,6 +94,7 @@ def ask(question: str, model_name: str | None = None, max_steps: int = MAX_STEPS
                 messages=messages,
                 exhausted=tuple(exhausted),
                 converged=False,
+                stop=None,
                 error=f"{type(error).__name__}: {error}",
             )
         return Answer(
@@ -94,6 +102,7 @@ def ask(question: str, model_name: str | None = None, max_steps: int = MAX_STEPS
             messages=messages,
             exhausted=tuple(exhausted),
             converged=True,
+            stop=verdict.stop,
             error=None,
         )
 
