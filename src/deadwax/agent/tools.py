@@ -5,9 +5,18 @@ from deadwax.domain import Constraints, validator
 
 MIN_DURATION_WINDOW_MS = 120_000
 
+ORDERINGS = {
+    "longest": lambda t: -t.duration_ms,
+    "shortest": lambda t: t.duration_ms,
+    "highest_energy": lambda t: -t.energy.value,
+    "lowest_energy": lambda t: t.energy.value,
+}
+
 
 def _display(duration_ms: int) -> str:
-    return f"{duration_ms // 60_000}:{duration_ms // 1000 % 60:02d}"
+    minutes, seconds = divmod(duration_ms // 1000, 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours}:{minutes:02d}:{seconds:02d}" if hours else f"{minutes}:{seconds:02d}"
 
 
 def _as_dict(track: Track) -> dict:
@@ -19,6 +28,8 @@ def _as_dict(track: Track) -> dict:
         "duration_display": _display(track.duration_ms),
         "genres": list(track.genres),
         "release_year": track.release_year,
+        "energy": track.energy.value,
+        "energy_provenance": track.energy.provenance,
         "last_played_at": track.last_played_at.isoformat() if track.last_played_at else None,
     }
 
@@ -31,6 +42,7 @@ def query_library(
     max_duration_ms: int | None = None,
     released_before: int | None = None,
     released_after: int | None = None,
+    order_by: str | None = None,
     limit: int = 20,
 ) -> dict:
     """Search the user's music library and return matching tracks with their totals.
@@ -41,9 +53,21 @@ def query_library(
     computed exactly. The tracks list is truncated to limit entries, so it may be
     shorter than total_matching.
 
-    Quote duration_display when showing a track's length. Never convert duration_ms
-    to minutes yourself.
+    To find a longest, shortest, highest or lowest track, pass order_by as one of
+    longest, shortest, highest_energy, lowest_energy and read the first entry. Never
+    rank, compare or pick a maximum out of the list yourself; the ordering is computed
+    here.
+
+    Quote duration_display for a track and total_duration_display for a set of them.
+    Never convert milliseconds to minutes yourself.
+
+    Energy is an estimate, not a measurement. Every track carries energy_provenance
+    saying where its value came from, and any answer that mentions energy must say it
+    is an estimate.
     """
+    if order_by is not None and order_by not in ORDERINGS:
+        return {"invalid_order_by": order_by, "allowed": sorted(ORDERINGS)}
+
     matches = [
         t
         for t in TRACKS
@@ -54,9 +78,14 @@ def query_library(
         and (released_before is None or t.release_year < released_before)
         and (released_after is None or t.release_year > released_after)
     ]
+    if order_by is not None:
+        matches = sorted(matches, key=ORDERINGS[order_by])
+
+    total_ms = sum(t.duration_ms for t in matches)
     return {
         "total_matching": len(matches),
-        "total_duration_ms": sum(t.duration_ms for t in matches),
+        "total_duration_ms": total_ms,
+        "total_duration_display": _display(total_ms),
         "tracks": [_as_dict(t) for t in matches[:limit]],
     }
 
@@ -86,6 +115,22 @@ def validate_playlist(
     unknown = [i for i in track_ids if i not in by_id]
     if unknown:
         return {"ok": False, "unknown_track_ids": unknown}
+
+    bounds = (
+        min_total_duration_ms,
+        max_total_duration_ms,
+        max_track_duration_ms,
+        max_tracks_per_artist,
+    )
+    if all(bound is None for bound in bounds) and not required_genres:
+        return {
+            "ok": False,
+            "invalid_constraints": "no constraints were supplied, so there is nothing to check",
+            "remedy": (
+                "an unconstrained playlist cannot be validated: ask the user how long it "
+                "should be, what genre, or how many tracks per artist, before proposing one"
+            ),
+        }
 
     if min_total_duration_ms is not None and max_total_duration_ms is not None:
         window = max_total_duration_ms - min_total_duration_ms
@@ -154,7 +199,27 @@ def check_feasibility(
 
     max_achievable_ms is the longest playlist the library can produce under these
     constraints. Compare it against what the user asked for when explaining a refusal.
+
+    A brief with no constraints at all cannot be checked. If the user has not said how
+    long the playlist should be or what should be in it, ask them before calling this.
     """
+    bounds = (
+        min_total_duration_ms,
+        max_track_duration_ms,
+        max_tracks_per_artist,
+        released_before,
+        released_after,
+    )
+    if all(bound is None for bound in bounds) and not required_genres:
+        return {
+            "needs_clarification": True,
+            "reason": "no_constraints_given",
+            "remedy": (
+                "the brief is empty: ask the user how long the playlist should be, what "
+                "genre, or which artists, before checking anything"
+            ),
+        }
+
     outcome = validator.check_feasibility(
         TRACKS,
         Constraints(
