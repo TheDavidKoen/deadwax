@@ -101,7 +101,10 @@ CI runs.
 uv run evals/runner.py
 ```
 
-The real thing. 15 cases at 3 repeats is 45 runs, roughly 225 requests.
+The real thing. 15 cases at 3 repeats is 45 runs. Measured from a recorded sweep, that is
+**125 requests** — 2.8 model calls per run, not the 5 originally assumed. Count them from the
+results file rather than estimating; free-tier budgets are small enough that the difference
+decides whether a sweep fits in a day.
 
 ```bash
 uv run evals/runner.py --case counts-jazz-tracks --repeats 1

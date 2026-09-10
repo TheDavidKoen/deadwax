@@ -116,6 +116,11 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
             attempts.append({"attempt": attempt, "error": f"{type(error).__name__}: {error}"})
             continue
 
+        if answer.error is not None:
+            print(f"ERROR {answer.error.partition(':')[0]}", file=sys.stderr)
+            attempts.append({"attempt": attempt, "error": answer.error})
+            continue
+
         calls = answer.tool_calls()
         text = answer_text(answer.messages[-1]) if answer.messages else ""
         result = score(case, calls, text, answer.converged)

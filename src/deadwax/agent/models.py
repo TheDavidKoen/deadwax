@@ -11,6 +11,7 @@ FREE_TIER_MODELS = (
 )
 
 DEFAULT_REQUESTS_PER_MINUTE = 12
+REQUEST_TIMEOUT_SECONDS = 60
 
 _limiter: InMemoryRateLimiter | None = None
 
@@ -48,5 +49,6 @@ def build_model(name: str) -> ChatGoogleGenerativeAI:
         temperature=0.0,
         max_output_tokens=2048,
         max_retries=0,
+        timeout=REQUEST_TIMEOUT_SECONDS,
         rate_limiter=shared_rate_limiter(),
     )
