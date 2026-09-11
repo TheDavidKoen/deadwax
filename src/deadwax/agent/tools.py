@@ -4,6 +4,7 @@ from deadwax.data import TRACKS, Track
 from deadwax.domain import Constraints, validator
 
 MIN_DURATION_WINDOW_MS = 120_000
+DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER")
 
 ORDERINGS = {
     "longest": lambda t: -t.duration_ms,
@@ -17,6 +18,18 @@ def _display(duration_ms: int) -> str:
     minutes, seconds = divmod(duration_ms // 1000, 60)
     hours, minutes = divmod(minutes, 60)
     return f"{hours}:{minutes:02d}:{seconds:02d}" if hours else f"{minutes}:{seconds:02d}"
+
+
+def _violation(violation) -> dict:
+    payload = {
+        "code": violation.code.value,
+        "track_ids": list(violation.track_ids),
+        "remedy": violation.remedy,
+        "adjust_by": violation.adjust_by,
+    }
+    if violation.adjust_by is not None and violation.code in DURATION_ADJUSTMENTS:
+        payload["adjust_by_display"] = _display(abs(violation.adjust_by))
+    return payload
 
 
 def _as_dict(track: Track) -> dict:
@@ -110,6 +123,9 @@ def validate_playlist(
     When describing the playlist, quote track_count and total_duration_display from
     this result verbatim. Never sum durations yourself and never convert milliseconds
     to minutes yourself.
+
+    A duration violation also carries adjust_by_display, the same amount written in
+    minutes and seconds. Show the user that, never the millisecond figure.
     """
     by_id = {t.id: t for t in TRACKS}
     unknown = [i for i in track_ids if i not in by_id]
@@ -165,15 +181,7 @@ def validate_playlist(
         "total_duration_ms": total_ms,
         "total_duration_display": _display(total_ms),
         "track_count": len(track_ids),
-        "violations": [
-            {
-                "code": v.code.value,
-                "track_ids": list(v.track_ids),
-                "remedy": v.remedy,
-                "adjust_by": v.adjust_by,
-            }
-            for v in result.violations
-        ],
+        "violations": [_violation(v) for v in result.violations],
         "soft_scores": [
             {"name": s.name, "score": s.score, "provenance": s.provenance}
             for s in result.soft_scores

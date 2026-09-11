@@ -1,0 +1,11 @@
+query = "build me a playlist of high energy tracks, nothing over 5 minutes"
+
+[expect]
+tool = "validate_playlist"
+
+[expect.parameters]
+max_track_duration_ms = 300000
+
+[expect.answer]
+must_contain_any = ["estimate", "estimated", "inferred", "not measured"]
+must_not_contain = ["Zombie", "Coffin for Head of State", "Sister Ray", "Halleluwah"]

@@ -1,0 +1,19 @@
+query = "build me a 20 minute reggae playlist"
+
+[expect]
+tool = "check_feasibility"
+
+[expect.parameters]
+required_genres = ["reggae"]
+
+[expect.answer]
+must_contain_any = [
+  "no reggae",
+  "any reggae",
+  "cannot",
+  "can't",
+  "not possible",
+  "not feasible",
+  "isn't feasible",
+]
+must_not_contain = ["King Tubby", "Augustus Pablo", "here is your playlist"]

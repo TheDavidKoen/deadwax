@@ -86,3 +86,16 @@ def test_a_genuinely_infeasible_brief_still_ends_the_run():
         }
     )
     assert inspect([as_tool_message("check_feasibility", payload)]).stop is Stop.INFEASIBLE
+
+
+def test_a_duration_violation_carries_a_readable_adjustment():
+    result = validate.invoke({"track_ids": ["t001"], "min_total_duration_ms": 1_800_000})
+    violation = next(v for v in result["violations"] if v["code"] == "DURATION_UNDER")
+    assert violation["adjust_by"] == 1_549_000
+    assert violation["adjust_by_display"] == "25:49"
+
+
+def test_a_count_violation_carries_no_duration_display():
+    result = validate.invoke({"track_ids": ["t001", "t003", "t004"], "max_tracks_per_artist": 2})
+    violation = next(v for v in result["violations"] if v["code"] == "ARTIST_LIMIT_EXCEEDED")
+    assert "adjust_by_display" not in violation

@@ -1,0 +1,19 @@
+query = "build me a 25 minute hip hop playlist with no more than two tracks by any one artist"
+
+[expect]
+tool = "check_feasibility"
+
+[expect.parameters]
+max_tracks_per_artist = 2
+
+[expect.answer]
+must_contain_any = [
+  "22:35",
+  "cannot",
+  "can't",
+  "not possible",
+  "not enough",
+  "not feasible",
+  "isn't feasible",
+]
+must_not_contain = ["here is your playlist", "here's your playlist"]

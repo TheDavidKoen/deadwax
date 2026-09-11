@@ -1,0 +1,13 @@
+query = "how long is Bohemian Rhapsody?"
+
+[expect.answer]
+must_contain_any = [
+  "not in your",
+  "not in the",
+  "don't have",
+  "do not have",
+  "not find",
+  "no track",
+  "not appear",
+]
+must_not_contain = ["5:54", "5:55", "5:57"]

@@ -1,0 +1,11 @@
+query = "how many rap songs do I have?"
+
+[expect]
+tool = "query_library"
+
+[expect.parameters]
+genre = "hip hop"
+
+[expect.answer]
+must_contain = ["9"]
+must_not_contain = ["Massive Attack", "Portishead", "Teardrop", "Glory Box"]

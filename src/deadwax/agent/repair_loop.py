@@ -36,8 +36,10 @@ CLOSING = {
         "constraint."
     ),
     Stop.UNREPAIRED: (
-        "Repair attempts are exhausted. Tell the user which constraint you could not "
-        "satisfy and quote the remedy from the last violation. Do not present a "
+        "Repair attempts are exhausted. Tell the user in plain language which constraint "
+        "could not be satisfied and by how much, quoting adjust_by_display where the "
+        "violation carries it. Never show a raw millisecond figure, and never repeat a "
+        "field name such as remedy or adjust_by back to the user. Do not present a "
         "playlist and do not claim partial success."
     ),
 }
