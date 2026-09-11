@@ -4,7 +4,7 @@ from typing import Any
 from langchain.agents import create_agent
 from langchain_google_genai.chat_models import GoogleRateLimitError
 
-from deadwax.agent import repair_loop, transcript
+from deadwax.agent import repair_loop, tracing, transcript
 from deadwax.agent.models import build_model, model_order
 from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
 
@@ -49,6 +49,8 @@ class Answer:
     exhausted: tuple[str, ...]
     converged: bool
     stop: repair_loop.Stop | None
+    trace_id: str | None
+    trace_url: str | None
     error: str | None
 
     def tool_calls(self) -> list[dict]:
@@ -66,44 +68,57 @@ def build_agent(model_name: str) -> Any:
     )
 
 
-def ask(question: str, model_name: str | None = None, max_steps: int = MAX_STEPS) -> Answer:
+def ask(
+    question: str,
+    model_name: str | None = None,
+    max_steps: int = MAX_STEPS,
+    trace_name: str = "ask",
+) -> Answer:
     candidates = (model_name,) if model_name else model_order()
     exhausted: list[str] = []
 
     for name in candidates:
         messages: list[Any] = []
         verdict = repair_loop.Verdict()
-        try:
-            for state in build_agent(name).stream(
-                {"messages": [{"role": "user", "content": question}]},
-                config={"recursion_limit": max_steps},
-                stream_mode="values",
-            ):
-                messages = state["messages"]
-                verdict = repair_loop.inspect(messages)
+        with tracing.traced(trace_name, metadata={"model": name, "question": question}) as trace:
+            try:
+                for state in build_agent(name).stream(
+                    {"messages": [{"role": "user", "content": question}]},
+                    config={"recursion_limit": max_steps, "callbacks": trace.callbacks},
+                    stream_mode="values",
+                ):
+                    messages = state["messages"]
+                    verdict = repair_loop.inspect(messages)
+                    if verdict.stop is not None:
+                        break
                 if verdict.stop is not None:
-                    break
-            if verdict.stop is not None:
-                messages = [*messages, repair_loop.finalise(messages, verdict, name)]
-        except GoogleRateLimitError:
-            exhausted.append(name)
-            continue
-        except Exception as error:
+                    messages = [
+                        *messages,
+                        repair_loop.finalise(messages, verdict, name, trace.callbacks),
+                    ]
+            except GoogleRateLimitError:
+                exhausted.append(name)
+                continue
+            except Exception as error:
+                return Answer(
+                    model=name,
+                    messages=messages,
+                    exhausted=tuple(exhausted),
+                    converged=False,
+                    stop=None,
+                    trace_id=trace.id,
+                    trace_url=trace.url,
+                    error=f"{type(error).__name__}: {error}",
+                )
             return Answer(
                 model=name,
                 messages=messages,
                 exhausted=tuple(exhausted),
-                converged=False,
-                stop=None,
-                error=f"{type(error).__name__}: {error}",
+                converged=True,
+                stop=verdict.stop,
+                trace_id=trace.id,
+                trace_url=trace.url,
+                error=None,
             )
-        return Answer(
-            model=name,
-            messages=messages,
-            exhausted=tuple(exhausted),
-            converged=True,
-            stop=verdict.stop,
-            error=None,
-        )
 
     raise RuntimeError(f"every candidate model is rate limited: {', '.join(exhausted)}")

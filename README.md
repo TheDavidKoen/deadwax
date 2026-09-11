@@ -79,8 +79,8 @@ reads as the build actually happened.
 | B · The agent | 5 · Eval harness | ✅ `v0.5` |
 | C · Making it good | 6 · Repair loop | ✅ |
 | C · Making it good | 7 · Adversarial cases | ✅ |
-| C · Making it good | 8 · Tracing | 🔨 in progress |
-| C · Making it good | 9 · Retrieval | ⬜ `v0.9` |
+| C · Making it good | 8 · Tracing | ✅ |
+| C · Making it good | 9 · Retrieval | 🔨 in progress `v0.9` |
 | D · Ship | 10 · Real data | ⬜ |
 | D · Ship | 11 · MCP server | ⬜ |
 | D · Ship | 12 · Site and writeup | ⬜ `v1.0` |
@@ -141,6 +141,37 @@ it has.
 Two recorded samples are committed as the evidence behind
 [ADR 0004](docs/adr/0004-agent-convergence-is-enforced-in-code.md):
 `2026-09-04-before-fixes.json` and `2026-09-04-after-fixes.json`.
+
+## Tracing
+
+Every model call goes through [Langfuse](https://langfuse.com) — rule 7, and the one rule
+that stayed unticked from stage 5 to stage 8.
+
+```bash
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
+```
+
+**Tracing is optional and the project runs without it.** With no keys set, `tracing.traced`
+yields an empty callback list and nothing else in the codebase branches on it. CI has no
+secrets, and anyone cloning this repository can run the agent with a Gemini key alone.
+Observability that breaks the thing it observes when switched off is not observability.
+
+There are exactly two places a model is invoked — the agent stream, and the tool-free closing
+turn that writes the final answer — and the handler reaches both. Covering only the first
+would leave every sentence a user actually reads untraced while the rule appeared satisfied.
+
+The eval runner names each trace after its case and attaches the four scores to it, so a red
+cell in the scorecard is a filter in the Langfuse UI rather than a hunt. Each recorded attempt
+also carries its own `trace_url`, which makes a results file from three weeks ago still
+clickable.
+
+```
+[trace] https://cloud.langfuse.com/project/<id>/traces/<id>
+```
+
+The CLI prints that line to stderr on every run.
 
 ## Evaluation
 

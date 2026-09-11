@@ -60,6 +60,14 @@ def inspect(messages: Sequence[Any]) -> Verdict:
     return Verdict(failures=failures)
 
 
-def finalise(messages: Sequence[Any], verdict: Verdict, model_name: str) -> Any:
+def finalise(
+    messages: Sequence[Any],
+    verdict: Verdict,
+    model_name: str,
+    callbacks: Sequence[Any] = (),
+) -> Any:
     closing = {"role": "user", "content": CLOSING[verdict.stop]}
-    return build_model(model_name).invoke([*messages, closing])
+    return build_model(model_name).invoke(
+        [*messages, closing],
+        config={"callbacks": list(callbacks)},
+    )

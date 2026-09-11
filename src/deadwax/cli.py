@@ -1,6 +1,7 @@
 import argparse
 import sys
 
+from deadwax.agent import tracing
 from deadwax.agent.loop import ask
 from deadwax.agent.transcript import answer_text
 from deadwax.config import load_env_file
@@ -31,7 +32,11 @@ def main() -> None:
     if not answer.converged:
         print(f"[warning] did not converge: {answer.error}", file=sys.stderr)
 
+    if answer.trace_url:
+        print(f"[trace] {answer.trace_url}", file=sys.stderr)
+
     print(answer_text(answer.messages[-1]) if answer.messages else "")
+    tracing.flush()
 
 
 if __name__ == "__main__":
