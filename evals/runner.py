@@ -6,11 +6,11 @@ import sys
 import tomllib
 import warnings
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from deadwax.agent import answer_text, ask
+from deadwax.agent import answer_text, ask, tracing
 from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
 from deadwax.config import load_env_file
 
@@ -110,7 +110,7 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
     for attempt in range(1, repeats + 1):
         print(f"  {case.name} [{attempt}/{repeats}] ... ", end="", flush=True, file=sys.stderr)
         try:
-            answer = ask(case.query, model_name=model)
+            answer = ask(case.query, model_name=model, trace_name=case.name)
         except Exception as error:
             print(f"ERROR {type(error).__name__}", file=sys.stderr)
             attempts.append({"attempt": attempt, "error": f"{type(error).__name__}: {error}"})
@@ -124,6 +124,7 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
         calls = answer.tool_calls()
         text = answer_text(answer.messages[-1]) if answer.messages else ""
         result = score(case, calls, text, answer.converged)
+        tracing.record_scores(answer.trace_id, asdict(result))
         print(
             f"tool={'y' if result.tool else 'n'} "
             f"params={'y' if result.parameters else 'n'} "
@@ -135,6 +136,7 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
                 "attempt": attempt,
                 "error": None,
                 "converged": result.converged,
+                "trace_url": answer.trace_url,
                 "stop": answer.stop,
                 "tool": result.tool,
                 "parameters": result.parameters,
@@ -298,10 +300,14 @@ def main() -> None:
             encoding="utf-8",
         )
 
+    tracing.flush()
+
     print()
     print_scorecard(scorecard(results))
     print()
     print(f"written to {path}")
+    if tracing.enabled():
+        print("traces and scores sent to Langfuse")
 
 
 if __name__ == "__main__":

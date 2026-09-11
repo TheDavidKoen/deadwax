@@ -9,6 +9,7 @@ keywords = ["llm", "agents", "evals", "rag", "mcp", "observability"]
 dependencies = [
     "langchain>=1",
     "langchain-google-genai>=4",
+    "langfuse>=4.15.2",
 ]
 
 [project.scripts]
