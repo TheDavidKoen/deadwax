@@ -1,0 +1,16 @@
+query = "build me a playlist that is exactly 30 minutes, not a second more or less"
+
+[expect.answer]
+must_contain_any = [
+  "approximate",
+  "roughly",
+  "close",
+  "cannot",
+  "can't",
+  "could not",
+  "couldn't",
+  "unable",
+  "impossible",
+  "not possible",
+]
+must_not_contain = ["30:00", " ms", "adjust_by", "remedy"]

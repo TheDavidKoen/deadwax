@@ -78,8 +78,8 @@ reads as the build actually happened.
 | B · The agent | 4 · Measure the wobble | ✅ |
 | B · The agent | 5 · Eval harness | ✅ `v0.5` |
 | C · Making it good | 6 · Repair loop | ✅ |
-| C · Making it good | 7 · Adversarial cases | 🔨 in progress |
-| C · Making it good | 8 · Tracing | ⬜ |
+| C · Making it good | 7 · Adversarial cases | ✅ |
+| C · Making it good | 8 · Tracing | 🔨 in progress |
 | C · Making it good | 9 · Retrieval | ⬜ `v0.9` |
 | D · Ship | 10 · Real data | ⬜ |
 | D · Ship | 11 · MCP server | ⬜ |
@@ -148,18 +148,33 @@ Two recorded samples are committed as the evidence behind
 uv run evals/runner.py
 ```
 
-15 hand-written cases in `evals/cases/`, each run three times, scored on three dimensions
-separately. Cases are TOML read with `tomllib` — a read-only parser, so nothing in this
-repository can write one. If the same author wrote the code and the grading, the score means
-nothing.
+23 cases in `evals/cases/`, each run three times, scored on three dimensions separately.
+Cases are TOML read with `tomllib` — a read-only parser, so no code in this repository can
+write one at runtime.
 
-`gemini-3.5-flash-lite` pinned, graded by the same case files before and after:
+The first fifteen were written by hand by the author, before the code they grade was
+finished. The eight adversarial cases added at stage 7 were drafted by an assistant against
+the fixture data and reviewed by the author. `evals/cases/README.md` records which is which,
+because a suite that grades its own author's code is worth less than one that does not, and
+saying so is cheaper than being caught.
 
-| | tool selection | parameters | answer content | convergence | tokens per sweep |
+`gemini-3.5-flash-lite` pinned. The current suite is 23 cases; the three rows above the rule
+are the 15-case suite, kept because each was measured against the one before it. A number
+from a 23-case run is not comparable to one from a 15-case run — the denominator changed on
+purpose.
+
+| | cases | tool selection | parameters | answer content | convergence |
 | --- | --- | --- | --- | --- | --- |
-| `v0.5` baseline | 100% | 100% | 93% | 98% | 106,118 |
-| stage 6 · repair loop | 100% | 100% | 89% | **100%** | 72,038 |
-| ranking in Python | 100% | 100% | **91%** | **100%** | **68,049** |
+| `v0.5` baseline | 15 | 100% | 100% | 93% | 98% |
+| stage 6 · repair loop | 15 | 100% | 100% | 89% | 100% |
+| ranking in Python | 15 | 100% | 100% | 91% | 100% |
+| — | | | | | |
+| **stage 7 · adversarial** | **23** | **100%** | **97%** | **88%** | **100%** |
+
+The stage 7 sweep recorded 4 transport failures out of 69 attempts, a provider outage rather
+than agent behaviour; those attempts are excluded from every rate, and every case retained at
+least two clean runs. Rates over a smaller sample are weaker — the `err` column in the
+scorecard is there so that is visible rather than buried.
 
 Stage 6 took the stop condition out of the system prompt and put it in code — see
 [ADR 0005](docs/adr/0005-the-agent-does-not-decide-when-it-is-finished.md). The case that
@@ -174,13 +189,24 @@ dropped from two calls and 11,200 tokens to one call and 4,528. Exposing `energy
 right reason: it had been passing on the model repeating a line from the system prompt about
 a field the tool never returned.
 
-The remaining answer failures are two, both correct behaviour graded red. `never-played-count`
-has no play-history filter to call, so the agent refuses; that is the one case in the suite
-proving it refuses rather than confabulates, and it stays red deliberately.
-`contradictory-duration` replies *"not possible"* where the case accepts *"impossible"* — a
-key that grades wording rather than fact. Neither key has been adjusted to flatter a result,
-because correcting grading criteria inside the change being graded produces a number that
-cannot be compared to anything.
+Stage 7 then added eight cases chosen to be hard, and three of them are red. None is a wrong
+answer; each names a specific thing the system cannot yet do.
+
+- **`are-there-any-rap-songs`** — parameters 0%. Asked *"how many rap songs do I have?"* the
+  agent calls `query_library(genre="rap")`, gets nothing, and reports *"you have 0 rap songs
+  in your library."* There are nine, tagged `hip hop`. It searches the word it was given and
+  never reaches for the word the library uses. Reproducible across every clean run.
+- **`high-energy-under-five-minutes`** — answer 0%. The playlist is correct: every track under
+  5:00, ranked by energy, no long track smuggled in. What is missing is the sentence saying
+  energy is an estimate. `energy_provenance` is in the tool result and the answer does not
+  mention it, so [rule 6](#architecture-rules) is violated in practice while the code that
+  supports it is in place.
+- **`never-played-count`** — answer 0%. No play-history filter exists, so the agent refuses.
+  This is the one case in the suite proving it refuses rather than confabulates, and it stays
+  red deliberately.
+
+No answer key has been adjusted to flatter a result. Correcting grading criteria inside the
+change being graded produces a number that cannot be compared to anything.
 
 The dimensions are scored separately because they fail differently: the right tool with the
 wrong argument is a different bug from the wrong tool, and one number hides which you have.

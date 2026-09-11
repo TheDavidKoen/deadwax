@@ -3,10 +3,26 @@
 One TOML file per case. The filename is the case name, so it appears in the scorecard —
 `counts-jazz-tracks.toml` reads better in a report than `case-07.toml`.
 
-**These files are written by hand and never generated.** The runner reads them with
-`tomllib`, which is read-only by design: nothing in this repository can write a case file.
+The runner reads them with `tomllib`, which is read-only by design: no code in this
+repository can write a case file at runtime.
+
+## Who wrote these
+
 A suite whose cases and code came from the same author proves only that the author is
-self-consistent.
+self-consistent, so provenance is recorded rather than assumed.
+
+| cases | author |
+| --- | --- |
+| the original fifteen, stages 5 and 6 | written by hand by the author, before the code they grade was finished |
+| the eight adversarial cases, stage 7 | drafted by an assistant against the fixture data at the author's instruction, then reviewed by the author |
+
+The stage 7 eight are `are-there-any-rap-songs`, `radiohead-jazz-tracks`,
+`high-energy-under-five-minutes`, `no-bpm-in-library`, `reggae-playlist-impossible`,
+`exact-duration-demanded`, `hip-hop-playlist-artist-cap` and `unknown-track-asked-about`.
+
+Read their scores with that in mind. An assistant drafting a case against data it has just
+inspected is likelier to assert what the system already does than what it ought to do, which
+is the specific bias the original hand-written rule existed to avoid.
 
 ## Schema
 
