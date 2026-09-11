@@ -173,6 +173,26 @@ clickable.
 
 The CLI prints that line to stderr on every run.
 
+### A known false alarm
+
+**A `LangGraph` span marked `ERROR` means the supervisor halted a *successful* run.** Nothing
+failed. `ask` breaks out of `.stream()` the moment `validate_playlist` returns `ok: true`,
+which closes the generator mid-flight, and LangChain reports the chain as errored.
+
+The correlation is exact: runs that stop early are `ERROR`, runs that finish on their own are
+`DEFAULT`. Which makes the signal backwards — a well-behaved playlist run is flagged, while
+`are-there-any-rap-songs`, which genuinely gives up, sits there clean.
+
+The trace's root span and its four scores carry the truth; the `LangGraph` level does not.
+The real fix is to halt from inside the graph rather than breaking the generator from outside,
+which is a redesign of [ADR 0005](docs/adr/0005-the-agent-does-not-decide-when-it-is-finished.md)'s
+mechanism and needs its own eval run.
+
+Worth recording how this was found: tracing surfaced it within ten minutes of being switched
+on, and it was a defect in code written two stages earlier that every eval sweep had scored as
+correct — because it *is* correct. The behaviour was right and the reporting was wrong, and
+nothing without traces would have shown that.
+
 ## Evaluation
 
 ```bash
@@ -200,12 +220,17 @@ purpose.
 | stage 6 · repair loop | 15 | 100% | 100% | 89% | 100% |
 | ranking in Python | 15 | 100% | 100% | 91% | 100% |
 | — | | | | | |
-| **stage 7 · adversarial** | **23** | **100%** | **97%** | **88%** | **100%** |
+| stage 7 · adversarial | 23 | 100% | 97% | 88% | 100% |
+| **stage 8 · tracing** | **23** | **100%** | **96%** | **87%** | **100%** |
 
-The stage 7 sweep recorded 4 transport failures out of 69 attempts, a provider outage rather
-than agent behaviour; those attempts are excluded from every rate, and every case retained at
-least two clean runs. Rates over a smaller sample are weaker — the `err` column in the
-scorecard is there so that is visible rather than buried.
+The last two rows measure the same behaviour; only the sample differs. The stage 7 sweep lost
+4 of 69 attempts to provider `504`s, which are excluded from every rate. The stage 8 sweep is
+the **first with zero transport errors** — all 69 attempts counted — so its slightly lower
+numbers are a fuller denominator rather than a regression. Tracing changes no prompt, tool or
+model.
+
+That is what the `err` column is for. Read it before the percentages: rates computed over a
+short sample are weaker, and burying that would make every other number less trustworthy.
 
 Stage 6 took the stop condition out of the system prompt and put it in code — see
 [ADR 0005](docs/adr/0005-the-agent-does-not-decide-when-it-is-finished.md). The case that
