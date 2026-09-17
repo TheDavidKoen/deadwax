@@ -11,6 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from deadwax.agent import answer_text, ask, tracing
+from deadwax.agent.models import EVAL_MODEL
 from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
 from deadwax.config import load_env_file
 
@@ -239,7 +240,7 @@ def main() -> None:
     parser.add_argument("--repeats", type=int, default=3, help="runs per case")
     parser.add_argument(
         "--model",
-        default="gemini-3.5-flash-lite",
+        default=EVAL_MODEL,
         help="the model to pin; a sample spread across models measures the models",
     )
     parser.add_argument("--rpm", type=int, default=12, help="client-side request ceiling")

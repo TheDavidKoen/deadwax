@@ -3,6 +3,7 @@
 Status: Accepted
 Date: 2026-08-26
 Amended: 2026-08-27 by [0003](0003-python-for-the-agent.md), implementation language only.
+Amended: 2026-09-17 by [0007](0007-where-the-model-never-computes-line-falls.md), which clarifies scope.
 The decision itself is unchanged.
 
 ## Context

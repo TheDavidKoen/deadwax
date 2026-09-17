@@ -12,6 +12,7 @@ FREE_TIER_MODELS = (
 
 DEFAULT_REQUESTS_PER_MINUTE = 12
 REQUEST_TIMEOUT_SECONDS = 60
+EVAL_MODEL = "gemini-3.5-flash-lite"
 
 _limiter: InMemoryRateLimiter | None = None
 

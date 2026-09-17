@@ -1,10 +1,11 @@
 from langchain_core.tools import tool
 
 from deadwax.data import TRACKS, Track
-from deadwax.domain import Constraints, validator
+from deadwax.domain import Constraints, Violation, validator
 
 MIN_DURATION_WINDOW_MS = 120_000
-DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER")
+DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER", "TRACK_TOO_LONG")
+KNOWN_GENRES = sorted({genre for track in TRACKS for genre in track.genres})
 
 ORDERINGS = {
     "longest": lambda t: -t.duration_ms,
@@ -20,7 +21,7 @@ def _display(duration_ms: int) -> str:
     return f"{hours}:{minutes:02d}:{seconds:02d}" if hours else f"{minutes}:{seconds:02d}"
 
 
-def _violation(violation) -> dict:
+def _violation(violation: Violation) -> dict:
     payload = {
         "code": violation.code.value,
         "track_ids": list(violation.track_ids),
@@ -77,6 +78,11 @@ def query_library(
     Energy is an estimate, not a measurement. Every track carries energy_provenance
     saying where its value came from, and any answer that mentions energy must say it
     is an estimate.
+
+    If a genre search finds nothing, known_genres lists the genre tags the library
+    actually uses. If the user's word is another name for one of them, as rap is for
+    hip hop, search again with that tag and say which tag you searched. Never
+    substitute a genre that is merely related.
     """
     if order_by is not None and order_by not in ORDERINGS:
         return {"invalid_order_by": order_by, "allowed": sorted(ORDERINGS)}
@@ -95,12 +101,15 @@ def query_library(
         matches = sorted(matches, key=ORDERINGS[order_by])
 
     total_ms = sum(t.duration_ms for t in matches)
-    return {
+    result = {
         "total_matching": len(matches),
         "total_duration_ms": total_ms,
         "total_duration_display": _display(total_ms),
         "tracks": [_as_dict(t) for t in matches[:limit]],
     }
+    if genre is not None and not matches:
+        result["known_genres"] = KNOWN_GENRES
+    return result
 
 
 @tool
@@ -111,6 +120,9 @@ def validate_playlist(
     max_track_duration_ms: int | None = None,
     max_tracks_per_artist: int | None = None,
     required_genres: list[str] | None = None,
+    released_before: int | None = None,
+    released_after: int | None = None,
+    target_energy: float | None = None,
 ) -> dict:
     """Check a proposed playlist against hard constraints and report every violation.
 
@@ -126,6 +138,14 @@ def validate_playlist(
 
     A duration violation also carries adjust_by_display, the same amount written in
     minutes and seconds. Show the user that, never the millisecond figure.
+
+    Pass the same release-year bounds you gave check_feasibility, so a track outside
+    the window is caught here too.
+
+    If the user asks for an energy level or a mood, pass target_energy between 0 and 1.
+    It is scored, never enforced: soft_scores reports how close the playlist came, and
+    because energy is estimated rather than measured, any answer that mentions it must
+    say so.
     """
     by_id = {t.id: t for t in TRACKS}
     unknown = [i for i in track_ids if i not in by_id]
@@ -137,6 +157,8 @@ def validate_playlist(
         max_total_duration_ms,
         max_track_duration_ms,
         max_tracks_per_artist,
+        released_before,
+        released_after,
     )
     if all(bound is None for bound in bounds) and not required_genres:
         return {
@@ -173,6 +195,9 @@ def validate_playlist(
             max_track_duration_ms=max_track_duration_ms,
             max_tracks_per_artist=max_tracks_per_artist,
             required_genres=tuple(required_genres or ()),
+            released_before=released_before,
+            released_after=released_after,
+            target_energy=target_energy,
         ),
     )
     total_ms = sum(by_id[i].duration_ms for i in track_ids)
@@ -205,8 +230,10 @@ def check_feasibility(
     tell the user which constraint fails and stop. Do not build a playlist anyway, do
     not relax the constraint yourself, and do not try alternative track combinations.
 
-    max_achievable_ms is the longest playlist the library can produce under these
-    constraints. Compare it against what the user asked for when explaining a refusal.
+    max_achievable_display is the longest playlist the library can produce under these
+    constraints. When explaining a refusal, describe what the user asked for in their
+    own words and quote max_achievable_display for what is possible. Never show the
+    user a millisecond figure and never convert one yourself.
 
     A brief with no constraints at all cannot be checked. If the user has not said how
     long the playlist should be or what should be in it, ask them before calling this.
@@ -244,5 +271,6 @@ def check_feasibility(
         "reason": outcome.reason.value if outcome.reason else None,
         "candidate_count": outcome.candidate_count,
         "max_achievable_ms": outcome.max_achievable_ms,
+        "max_achievable_display": _display(outcome.max_achievable_ms),
         "requested_min_ms": outcome.requested_min_ms,
     }

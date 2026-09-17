@@ -26,14 +26,18 @@ CLOSING = {
     Stop.VALIDATED: (
         "The playlist you proposed has passed validation and is correct. Present it to "
         "the user now. List the tracks, and quote track_count and "
-        "total_duration_display from the validation result verbatim. Do not round them, "
-        "do not hedge, and do not suggest changes."
+        "total_duration_display from the validation result verbatim, without rounding "
+        "or hedging. If soft_scores is not empty, say how closely the playlist matched "
+        "and that the score rests on estimated values, naming the provenance given. Do "
+        "not suggest changes."
     ),
     Stop.INFEASIBLE: (
         "This brief cannot be satisfied by the library. Tell the user plainly that it is "
-        "not possible, name the constraint that fails, and compare max_achievable_ms "
-        "against what they asked for. Do not offer a playlist and do not relax the "
-        "constraint."
+        "not possible and name the constraint that fails. Describe what they asked for in "
+        "their own words and quote max_achievable_display for the most this library can "
+        "provide; if no tracks match at all, say that instead. Never show a millisecond "
+        "figure, never convert one yourself, and never repeat a field name back to the "
+        "user. Do not offer a playlist and do not relax the constraint."
     ),
     Stop.UNREPAIRED: (
         "Repair attempts are exhausted. Tell the user in plain language which constraint "
