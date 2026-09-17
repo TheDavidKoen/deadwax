@@ -24,6 +24,27 @@ Read their scores with that in mind. An assistant drafting a case against data i
 inspected is likelier to assert what the system already does than what it ought to do, which
 is the specific bias the original hand-written rule existed to avoid.
 
+### Later edits
+
+| cases | change | by |
+| --- | --- | --- |
+| `playlist-jazz-impossible`, `contradictory-duration`, `hip-hop-playlist-artist-cap`, `reggae-playlist-impossible` | added `" ms"`, `"millisecond"` and `"_ms"` to `must_not_contain` | an assistant, approved by the author |
+| `radiohead-jazz-tracks` | replaced a ban on the four Radiohead track names with `genre = "jazz"` in parameters and a set of negations in `must_contain_any` | an assistant, correcting its own stage 7 key |
+| `contradictory-duration` | added `"not possible"` to `must_contain_any` | an assistant, approved by the author |
+
+The `radiohead-jazz-tracks` key banned the band's track names to catch them being presented
+as jazz. Once the agent began explaining *what the tracks actually are* — *"four Radiohead
+tracks … and their genres are art rock and electronic"* — the ban failed a correct answer.
+Substring matching cannot tell "these are jazz" from "these are not jazz". Both sweeps were
+rescored against the corrected key, so the before and after remain comparable.
+
+The first two are from the author's original fifteen. The change followed an audit that
+found 11 of 12 refusal answers quoting raw milliseconds or converting them by hand — several
+converted wrongly, all of them graded green. It is additive: it forbids a failure the cases
+never checked for and loosens nothing. Rescoring the last committed sweep against the edited
+cases dropped answer content from 87% to 71%, which is the honest baseline for the fix that
+followed.
+
 ## Schema
 
 ```toml

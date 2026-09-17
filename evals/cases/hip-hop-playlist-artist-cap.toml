@@ -16,4 +16,4 @@ must_contain_any = [
   "not feasible",
   "isn't feasible",
 ]
-must_not_contain = ["here is your playlist", "here's your playlist"]
+must_not_contain = ["here is your playlist", "here's your playlist", " ms", "millisecond", "_ms"]

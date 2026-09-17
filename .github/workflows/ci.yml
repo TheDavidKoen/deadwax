@@ -28,13 +28,7 @@ jobs:
           enable-cache: true
 
       - name: Install dependencies
-        run: |
-          if [ -f uv.lock ]; then
-            uv sync --locked
-          else
-            echo "No uv.lock committed yet - run 'uv lock' locally and commit it."
-            uv sync
-          fi
+        run: uv sync --locked
 
       - name: Lint
         run: uv run ruff check .
@@ -43,17 +37,7 @@ jobs:
         run: uv run ruff format --check .
 
       - name: Unit tests
-        run: |
-          if git ls-files 'tests/*.py' | grep -q .; then
-            uv run pytest
-          else
-            echo "No test files yet - unit tests land at stage 2."
-          fi
+        run: uv run pytest
 
-      - name: Evals
-        run: |
-          if [ -f evals/runner.py ]; then
-            uv run evals/runner.py --fixtures-only
-          else
-            echo "No eval runner yet - the eval harness lands at stage 5."
-          fi
+      - name: Validate eval cases
+        run: uv run evals/runner.py --fixtures-only

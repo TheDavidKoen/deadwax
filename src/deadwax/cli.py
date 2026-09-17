@@ -1,9 +1,7 @@
 import argparse
 import sys
 
-from deadwax.agent import tracing
-from deadwax.agent.loop import ask
-from deadwax.agent.transcript import answer_text
+from deadwax.agent import answer_text, ask, tracing
 from deadwax.config import load_env_file
 
 

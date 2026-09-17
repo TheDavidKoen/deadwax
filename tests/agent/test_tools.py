@@ -99,3 +99,49 @@ def test_a_count_violation_carries_no_duration_display():
     result = validate.invoke({"track_ids": ["t001", "t003", "t004"], "max_tracks_per_artist": 2})
     violation = next(v for v in result["violations"] if v["code"] == "ARTIST_LIMIT_EXCEEDED")
     assert "adjust_by_display" not in violation
+
+
+def test_a_track_length_violation_carries_a_readable_adjustment():
+    result = validate.invoke({"track_ids": ["t002"], "max_track_duration_ms": 300_000})
+    violation = next(v for v in result["violations"] if v["code"] == "TRACK_TOO_LONG")
+    assert violation["adjust_by_display"] == _display(abs(violation["adjust_by"]))
+
+
+def test_an_infeasible_brief_reports_its_limit_readably():
+    result = check_feasibility.invoke(
+        {"required_genres": ["hip hop"], "min_total_duration_ms": 1_800_000}
+    )
+    assert result["feasible"] is False
+    assert result["max_achievable_display"] == _display(result["max_achievable_ms"])
+
+
+def test_a_target_energy_is_scored_with_its_provenance():
+    result = validate.invoke(
+        {"track_ids": ["t001"], "max_track_duration_ms": 600_000, "target_energy": 0.4}
+    )
+    assert result["ok"] is True
+    [score] = result["soft_scores"]
+    assert score["name"] == "energy"
+    assert "estimate" in score["provenance"]
+
+
+def test_a_target_energy_alone_is_not_a_brief():
+    result = validate.invoke({"track_ids": ["t001"], "target_energy": 0.8})
+    assert result["ok"] is False
+    assert "invalid_constraints" in result
+
+
+def test_a_release_year_window_is_enforced_on_validation():
+    result = validate.invoke({"track_ids": ["t001"], "released_before": 2000})
+    codes = [v["code"] for v in result["violations"]]
+    assert codes == ["RELEASE_YEAR_OUT_OF_RANGE"]
+
+
+def test_a_genre_search_that_finds_nothing_offers_the_library_vocabulary():
+    result = search(genre="rap")
+    assert result["total_matching"] == 0
+    assert "hip hop" in result["known_genres"]
+
+
+def test_a_genre_search_that_finds_tracks_does_not_offer_the_vocabulary():
+    assert "known_genres" not in search(genre="hip hop")

@@ -8,7 +8,8 @@ with a deterministic validator, a repair loop, and an eval suite that reports pa
 rather than pass/fail.
 
 Built as a portfolio piece demonstrating production LLM engineering practice: tool use,
-retrieval, tracing, evaluation, and MCP.
+evaluation and tracing today, with retrieval and an MCP server still to come — see
+[build progress](#build-progress).
 
 ## The interesting part
 
@@ -52,7 +53,7 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 | Language | Python 3.13 |
 | Toolchain | uv for dependencies and Python itself, ruff for lint and format, pytest |
 | Agent | LangChain, introduced at stage 3 and not before |
-| Model | Google Gemini Flash, with OpenRouter fallback |
+| Model | Google Gemini Flash, falling back across Gemini free-tier models. OpenRouter fallback is planned, not built |
 | Store | SQLite via the `sqlite3` standard library module |
 | Retrieval | Build-time embeddings, cosine similarity in plain Python — [no vector database](docs/adr/0002-no-vector-database.md) |
 | Tracing | Langfuse |
@@ -221,13 +222,20 @@ purpose.
 | ranking in Python | 15 | 100% | 100% | 91% | 100% |
 | — | | | | | |
 | stage 7 · adversarial | 23 | 100% | 97% | 88% | 100% |
-| **stage 8 · tracing** | **23** | **100%** | **96%** | **87%** | **100%** |
+| stage 8 · tracing | 23 | 100% | 96% | 87% | 100% |
+| — | | | | | |
+| stage 8, rescored against corrected cases | 23 | 100% | 96% | 71% | 100% |
+| **refusal arithmetic fixed** | **23** | **100%** | **100%** | **96%** | **100%** |
 
-The last two rows measure the same behaviour; only the sample differs. The stage 7 sweep lost
-4 of 69 attempts to provider `504`s, which are excluded from every rate. The stage 8 sweep is
-the **first with zero transport errors** — all 69 attempts counted — so its slightly lower
-numbers are a fuller denominator rather than a regression. Tracing changes no prompt, tool or
-model.
+The stage 7 and stage 8 rows measure the same behaviour; only the sample differs. The stage 7
+sweep lost 4 of 69 attempts to provider `504`s, which are excluded from every rate, while the
+stage 8 sweep was the first with zero transport errors.
+
+The last two rows are the most recent comparison, and both are graded by the same case files.
+An audit found that the refusal cases never checked for raw milliseconds, and 11 of 12 refusal
+answers contained them. Adding that check and rescoring the committed stage 8 sweep — at no
+API cost — dropped its answer content from 87% to 71%. That drop is not a regression. It is
+the old number being measured properly for the first time.
 
 That is what the `err` column is for. Read it before the percentages: rates computed over a
 short sample are weaker, and burying that would make every other number less trustworthy.
@@ -245,24 +253,28 @@ dropped from two calls and 11,200 tokens to one call and 4,528. Exposing `energy
 right reason: it had been passing on the model repeating a line from the system prompt about
 a field the tool never returned.
 
-Stage 7 then added eight cases chosen to be hard, and three of them are red. None is a wrong
-answer; each names a specific thing the system cannot yet do.
+Stage 7 added eight cases chosen to be hard, and they found three real defects. All three are
+now fixed; [ADR 0007](docs/adr/0007-where-the-model-never-computes-line-falls.md) covers why
+each fix sits where it does.
 
-- **`are-there-any-rap-songs`** — parameters 0%. Asked *"how many rap songs do I have?"* the
-  agent calls `query_library(genre="rap")`, gets nothing, and reports *"you have 0 rap songs
-  in your library."* There are nine, tagged `hip hop`. It searches the word it was given and
-  never reaches for the word the library uses. Reproducible across every clean run.
-- **`high-energy-under-five-minutes`** — answer 0%. The playlist is correct: every track under
-  5:00, ranked by energy, no long track smuggled in. What is missing is the sentence saying
-  energy is an estimate. `energy_provenance` is in the tool result and the answer does not
-  mention it, so [rule 6](#architecture-rules) is violated in practice while the code that
-  supports it is in place.
-- **`never-played-count`** — answer 0%. No play-history filter exists, so the agent refuses.
-  This is the one case in the suite proving it refuses rather than confabulates, and it stays
-  red deliberately.
+- **Refusals did arithmetic.** Every refusal converted milliseconds to minutes by hand, and
+  some got it wrong — *"22.5 minutes (1,355,000 ms)"* for a figure of 22:35. Tools now return
+  display forms of every number a user reads, and refusals quote them: *"the most this
+  library can provide is 9:51."*
+- **Rule 6 was unreachable.** The validator could score energy, but no tool let the agent ask
+  it to. `validate_playlist` now takes `target_energy`, and the score comes back with its
+  provenance: *"an energy score of 0.985 … this score rests on estimated values."*
+- **The agent didn't know the library's vocabulary.** Asked for rap, it searched `rap`, found
+  nothing and stopped — there are nine tracks tagged `hip hop`. A genre search that misses now
+  returns the tags the library uses, and the model decides whether the user's word is another
+  name for one. No synonym table exists in code, because that judgement is about language.
 
-No answer key has been adjusted to flatter a result. Correcting grading criteria inside the
-change being graded produces a number that cannot be compared to anything.
+One case stays red on purpose. **`never-played-count`** has no play-history filter to call, so
+the agent refuses — it is the one case proving the system refuses rather than confabulates.
+
+Case keys have been corrected three times, each for grading wording rather than fact, and
+each recorded in `evals/cases/README.md`. Every correction was applied to the "before" sweep
+as well as the "after", so the comparison holds.
 
 The dimensions are scored separately because they fail differently: the right tool with the
 wrong argument is a different bug from the wrong tool, and one number hides which you have.

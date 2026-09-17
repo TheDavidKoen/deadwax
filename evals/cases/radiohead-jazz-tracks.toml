@@ -5,11 +5,14 @@ tool = "query_library"
 
 [expect.parameters]
 artist = "Radiohead"
+genre = "jazz"
 
 [expect.answer]
-must_not_contain = [
-  "Everything in Its Right Place",
-  "Paranoid Android",
-  "Idioteque",
-  "Weird Fishes",
+must_contain_any = [
+  "do not have",
+  "don't have",
+  "not have any",
+  "no jazz",
+  "no radiohead",
+  "none of",
 ]

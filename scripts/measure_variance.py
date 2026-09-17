@@ -9,6 +9,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from deadwax.agent import Answer, answer_text, ask
+from deadwax.agent.models import EVAL_MODEL
 from deadwax.config import load_env_file
 
 OUT_DIR = Path("evals") / "variance"
@@ -71,7 +72,7 @@ def result_of(index: int, answer: Answer, elapsed_ms: int) -> dict:
         "converged": answer.converged,
         "model": answer.model,
         "elapsed_ms": elapsed_ms,
-        "requests": len(calls) + 1,
+        "requests": len(calls) + 1 + (1 if answer.stop else 0),
         "tool_calls": calls,
         "total_tokens": answer.total_tokens(),
         "final_text": answer_text(answer.messages[-1]) if answer.messages else "",
@@ -115,7 +116,7 @@ def main() -> None:
     parser.add_argument("--runs", type=int, default=10, help="how many times to run it")
     parser.add_argument(
         "--model",
-        default="gemini-3.5-flash-lite",
+        default=EVAL_MODEL,
         help="the model to pin; comparability requires one model for the whole sample",
     )
     parser.add_argument(
