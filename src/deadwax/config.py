@@ -1,5 +1,11 @@
 import os
+import sys
 from pathlib import Path
+
+
+def use_utf8_output() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        stream.reconfigure(encoding="utf-8", errors="replace")
 
 
 def load_env_file(path: Path | None = None) -> None:

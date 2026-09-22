@@ -13,7 +13,7 @@ from pathlib import Path
 from deadwax.agent import answer_text, ask, tracing
 from deadwax.agent.models import EVAL_MODEL
 from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
-from deadwax.config import load_env_file
+from deadwax.config import load_env_file, use_utf8_output
 
 CASES_DIR = Path("evals") / "cases"
 RESULTS_DIR = Path("evals") / "results"
@@ -277,6 +277,7 @@ def main() -> None:
         return
 
     os.environ.setdefault("DEADWAX_RPM", str(args.rpm))
+    use_utf8_output()
     load_env_file()
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
