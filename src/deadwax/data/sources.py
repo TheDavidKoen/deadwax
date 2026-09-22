@@ -11,6 +11,8 @@ from deadwax import __version__
 
 USER_AGENT = f"Deadwax/{__version__} ( https://github.com/TheDavidKoen/deadwax )"
 MUSICBRAINZ = "https://musicbrainz.org/ws/2"
+WIKIDATA_ENTITY = "https://www.wikidata.org/wiki/Special:EntityData"
+WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php"
 MIN_INTERVAL_SECONDS = 1.1
 RETRY_STATUSES = (429, 503)
 MAX_ATTEMPTS = 4
@@ -55,3 +57,32 @@ def search_artists(http: Http, name: str, limit: int = 10) -> list[dict]:
     phrase = name.replace("\\", "\\\\").replace('"', '\\"')
     query = urllib.parse.urlencode({"query": f'artist:"{phrase}"', "fmt": "json", "limit": limit})
     return http.get_json(f"{MUSICBRAINZ}/artist/?{query}").get("artists", [])
+
+
+def lookup_artist(http: Http, mbid: str) -> dict:
+    return http.get_json(f"{MUSICBRAINZ}/artist/{mbid}?inc=url-rels+tags&fmt=json")
+
+
+def english_wikipedia_title(http: Http, wikidata_id: str) -> str | None:
+    payload = http.get_json(f"{WIKIDATA_ENTITY}/{wikidata_id}.json")
+    entity = next(iter(payload.get("entities", {}).values()), {})
+    return entity.get("sitelinks", {}).get("enwiki", {}).get("title")
+
+
+def wikipedia_article(http: Http, title: str) -> tuple[str, str] | None:
+    query = urllib.parse.urlencode(
+        {
+            "action": "query",
+            "prop": "extracts",
+            "explaintext": 1,
+            "exsectionformat": "wiki",
+            "redirects": 1,
+            "format": "json",
+            "formatversion": 2,
+            "titles": title,
+        }
+    )
+    pages = http.get_json(f"{WIKIPEDIA_API}?{query}").get("query", {}).get("pages", [])
+    if not pages or pages[0].get("missing") or not pages[0].get("extract"):
+        return None
+    return pages[0]["title"], pages[0]["extract"]

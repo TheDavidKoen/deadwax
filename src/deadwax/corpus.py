@@ -2,17 +2,30 @@ import argparse
 import json
 import sys
 from collections import defaultdict
+from datetime import date
 from pathlib import Path
 
 from deadwax.config import use_utf8_output
 from deadwax.data import TRACKS
+from deadwax.data.documents import (
+    MUSICBRAINZ_ARTIST,
+    document,
+    linked_wikipedia_title,
+    wikidata_id,
+)
 from deadwax.data.resolve import Candidate, Resolution, resolve
-from deadwax.data.sources import Http, search_artists
+from deadwax.data.sources import (
+    Http,
+    english_wikipedia_title,
+    lookup_artist,
+    search_artists,
+    wikipedia_article,
+)
 
 CORPUS_DIR = Path(__file__).parent / "data" / "corpus"
 ARTISTS_FILE = CORPUS_DIR / "artists.json"
+DOCUMENTS_FILE = CORPUS_DIR / "documents.json"
 CACHE_DIR = Path(".cache") / "http"
-MUSICBRAINZ_ARTIST = "https://musicbrainz.org/artist/"
 
 
 def library_genres() -> dict[str, list[str]]:
@@ -102,6 +115,37 @@ def run_approve() -> None:
     print(f"{approved} flagged match(es) approved, {len(artists)} artists confirmed")
 
 
+def run_fetch(http: Http) -> None:
+    artists = read_json(ARTISTS_FILE)
+    if not artists or any(not e.get("reviewed") for e in artists.values()):
+        raise SystemExit(
+            "every match must be reviewed first: run 'resolve', check it, then 'approve'"
+        )
+
+    documents = read_json(DOCUMENTS_FILE)
+    retrieved = date.today().isoformat()
+    for name, e in artists.items():
+        if name in documents:
+            continue
+        mbid = e["musicbrainz"]["mbid"]
+        print(f"  {name} ... ", end="", flush=True, file=sys.stderr)
+        artist = lookup_artist(http, mbid)
+        relations = artist.get("relations", [])
+        qid = wikidata_id(relations)
+        title = english_wikipedia_title(http, qid) if qid else linked_wikipedia_title(relations)
+        article = wikipedia_article(http, title) if title else None
+        documents[name] = document(name, mbid, artist, article, retrieved)
+        write_json(DOCUMENTS_FILE, documents)
+        print(article[0] if article else "NO WIKIPEDIA ARTICLE", file=sys.stderr)
+
+    without = [name for name, d in documents.items() if d["wikipedia"] is None]
+    print()
+    print(f"{len(documents)} documents, {len(documents) - len(without)} with a Wikipedia article")
+    if without:
+        print(f"no article for: {', '.join(without)}")
+    print(f"written to {DOCUMENTS_FILE}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="deadwax-corpus",
@@ -116,6 +160,10 @@ def main() -> None:
         "approve",
         help="record that the flagged matches have been checked by a person",
     )
+    commands.add_parser(
+        "fetch",
+        help="download MusicBrainz facts and Wikipedia text for every approved artist",
+    )
     use_utf8_output()
     args = parser.parse_args()
 
@@ -123,6 +171,8 @@ def main() -> None:
         run_resolve(Http(CACHE_DIR))
     if args.command == "approve":
         run_approve()
+    if args.command == "fetch":
+        run_fetch(Http(CACHE_DIR))
 
 
 if __name__ == "__main__":
