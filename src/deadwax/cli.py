@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from deadwax.agent import answer_text, ask, tracing
-from deadwax.config import load_env_file
+from deadwax.config import load_env_file, use_utf8_output
 
 
 def main() -> None:
@@ -17,6 +17,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
+    use_utf8_output()
     load_env_file()
     answer = ask(" ".join(args.question), model_name=args.model)
 

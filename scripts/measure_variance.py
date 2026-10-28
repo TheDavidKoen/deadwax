@@ -10,7 +10,7 @@ from pathlib import Path
 
 from deadwax.agent import Answer, answer_text, ask
 from deadwax.agent.models import EVAL_MODEL
-from deadwax.config import load_env_file
+from deadwax.config import load_env_file, use_utf8_output
 
 OUT_DIR = Path("evals") / "variance"
 
@@ -128,6 +128,7 @@ def main() -> None:
     args = parser.parse_args()
 
     os.environ.setdefault("DEADWAX_RPM", str(args.rpm))
+    use_utf8_output()
     load_env_file()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

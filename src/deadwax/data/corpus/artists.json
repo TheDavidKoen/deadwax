@@ -1,0 +1,817 @@
+{
+  "A Tribe Called Quest": {
+    "musicbrainz": {
+      "mbid": "9689aa5a-4471-4fb4-9721-07cecda0fa9f",
+      "name": "A Tribe Called Quest",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Aphex Twin": {
+    "musicbrainz": {
+      "mbid": "f22942a1-6f70-4f48-866e-238cb2308fbd",
+      "name": "Aphex Twin",
+      "disambiguation": "",
+      "country": null
+    },
+    "needs_review": false,
+    "reason": "3 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "65016d2c-b183-405b-91a4-275e6b7b5600",
+        "name": "Aphex Twin",
+        "disambiguation": "UK experimental electronic artist",
+        "country": null
+      },
+      {
+        "mbid": "1f7b4d15-cf9b-403e-bab8-87fc99aa08ef",
+        "name": "Aphex Twin",
+        "disambiguation": "appears on a KUSOMEN release",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "Arthur Russell": {
+    "musicbrainz": {
+      "mbid": "f43370e3-6d86-44e7-ae4c-ca098962dcd0",
+      "name": "Arthur Russell",
+      "disambiguation": "American cellist, composer and singer",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Augustus Pablo": {
+    "musicbrainz": {
+      "mbid": "e2f9c452-7eb0-4782-bc3e-36f2c456ffe0",
+      "name": "Augustus Pablo",
+      "disambiguation": "",
+      "country": "JM"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Bark Psychosis": {
+    "musicbrainz": {
+      "mbid": "1a5c6b6c-3b81-431a-b5d3-15a7698de499",
+      "name": "Bark Psychosis",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Bjork": {
+    "musicbrainz": {
+      "mbid": "87c5dedd-371d-4a53-9f7f-80522fb7f3cb",
+      "name": "Björk",
+      "disambiguation": "",
+      "country": "IS"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Boards of Canada": {
+    "musicbrainz": {
+      "mbid": "69158f97-4c07-4c4e-baf8-4e4ab1ed666e",
+      "name": "Boards of Canada",
+      "disambiguation": "Scottish electronic duo",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": "2 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "3ab0c8c5-89f2-420a-a2fa-262acdd6a18c",
+        "name": "Boards of Canada",
+        "disambiguation": "for fake releases and mistagged recordings",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "Broadcast": {
+    "musicbrainz": {
+      "mbid": "aaae25bf-c794-45d7-bab7-cdc7c655bfa6",
+      "name": "Broadcast",
+      "disambiguation": "UK electronic band",
+      "country": null
+    },
+    "needs_review": false,
+    "reason": "4 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "7216e911-c3ca-4591-a366-8cb0d3948b8d",
+        "name": "Broadcast",
+        "disambiguation": "band from Finland",
+        "country": "FI"
+      },
+      {
+        "mbid": "8060a437-801a-4494-bbb8-8dcfcd5e315d",
+        "name": "Broadcast",
+        "disambiguation": "Melodic Hardcore from Sweden",
+        "country": null
+      },
+      {
+        "mbid": "6af1918f-75a4-490c-bf88-9a8dc42132ec",
+        "name": "Broadcast",
+        "disambiguation": "new wave",
+        "country": "GB"
+      }
+    ],
+    "reviewed": true
+  },
+  "Burial": {
+    "musicbrainz": {
+      "mbid": "9ddce51c-2b75-4b3e-ac8c-1db09e7c89c6",
+      "name": "Burial",
+      "disambiguation": "UK dubstep",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": "7 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "a2570abc-9231-426e-967e-b3d7f10a9410",
+        "name": "Burial",
+        "disambiguation": "UK / Black/Death Metal",
+        "country": null
+      },
+      {
+        "mbid": "836e8de5-cc76-47c1-997a-8b82b525d619",
+        "name": "Burial",
+        "disambiguation": "Dutch death metal",
+        "country": "NL"
+      },
+      {
+        "mbid": "4f4f26e3-c6cf-46a6-8902-4b1bdf9ba694",
+        "name": "Burial",
+        "disambiguation": "German punk/hardcore group, Japanese-style",
+        "country": "DE"
+      }
+    ],
+    "reviewed": true
+  },
+  "Can": {
+    "musicbrainz": {
+      "mbid": "13501c7d-d181-45ba-af52-5f101d8516a0",
+      "name": "Can",
+      "disambiguation": "German rock band",
+      "country": "DE"
+    },
+    "needs_review": false,
+    "reason": "2 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "f3372768-06b5-4b1f-8f85-857dd758c42c",
+        "name": "Can",
+        "disambiguation": "캔, Korean duo",
+        "country": "KR"
+      }
+    ],
+    "reviewed": true
+  },
+  "Cluster": {
+    "musicbrainz": {
+      "mbid": "393ce5ee-4550-48e2-97f9-50a47a74bdc1",
+      "name": "Cluster",
+      "disambiguation": "Dieter Moebius and Hans-Joachim Roedelius",
+      "country": "DE"
+    },
+    "needs_review": false,
+    "reason": "8 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "c439487d-5a02-4b9c-9b9a-6b235b059492",
+        "name": "Cluster",
+        "disambiguation": "Italian vocal band",
+        "country": "IT"
+      },
+      {
+        "mbid": "b4fcbd7c-143d-4a6d-b20d-3a635ce1898b",
+        "name": "Cluster",
+        "disambiguation": "Bennie van Lent, hardcore techno",
+        "country": null
+      },
+      {
+        "mbid": "6726f707-71c8-4e1d-9668-34d831a932bb",
+        "name": "Clúster",
+        "disambiguation": "Argentine singer",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "Cocteau Twins": {
+    "musicbrainz": {
+      "mbid": "000fc734-b7e1-4a01-92d1-f544261b43f5",
+      "name": "Cocteau Twins",
+      "disambiguation": "",
+      "country": null
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "D'Angelo": {
+    "musicbrainz": {
+      "mbid": "b66771cc-45fa-4a32-b14f-5337d7223d7a",
+      "name": "D’Angelo",
+      "disambiguation": "US soul singer, songwriter & producer",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": "3 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "1e84ef87-440c-4857-ad46-2bfab071b5cb",
+        "name": "D’angelo",
+        "disambiguation": "Brazilian jazz/samba group",
+        "country": "BR"
+      },
+      {
+        "mbid": "41c38419-cd66-4c67-bffd-88767d49963b",
+        "name": "D'Angelo",
+        "disambiguation": "appears on AZUR's track",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "David Bowie": {
+    "musicbrainz": {
+      "mbid": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
+      "name": "David Bowie",
+      "disambiguation": "English singer‐songwriter",
+      "country": null
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Erykah Badu": {
+    "musicbrainz": {
+      "mbid": "321531fc-db73-4ffa-a959-61a61a2908c1",
+      "name": "Erykah Badu",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Fela Kuti": {
+    "musicbrainz": {
+      "mbid": "6514cffa-fbe0-4965-ad88-e998ead8a82a",
+      "name": "Fela Kuti",
+      "disambiguation": "",
+      "country": "NG"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Four Tet": {
+    "musicbrainz": {
+      "mbid": "3bcff06f-675a-451f-9075-99e8657047e8",
+      "name": "Four Tet",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Gas": {
+    "musicbrainz": {
+      "mbid": "054b0483-eeb8-48ce-bb72-f1cb57ff44f9",
+      "name": "Gas",
+      "disambiguation": "German electronic producer Wolfgang Voigt",
+      "country": "DE"
+    },
+    "needs_review": false,
+    "reason": "3 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "bf0a5eff-cb6c-4339-9110-6dd374e69c00",
+        "name": "Gas",
+        "disambiguation": "electronic music from Mat Jarvis",
+        "country": "GB"
+      },
+      {
+        "mbid": "0e1b7728-ab75-4a20-92b9-54de05736c68",
+        "name": "Gas",
+        "disambiguation": "Japanese punk band",
+        "country": "JP"
+      }
+    ],
+    "reviewed": true
+  },
+  "Godspeed You! Black Emperor": {
+    "musicbrainz": {
+      "mbid": "3648db01-b29d-4ab9-835c-83f6a5068fe4",
+      "name": "Godspeed You! Black Emperor",
+      "disambiguation": "",
+      "country": "CA"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Grouper": {
+    "musicbrainz": {
+      "mbid": "7e571e09-887e-4544-b993-eb75e7837ec1",
+      "name": "Grouper",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Guided by Voices": {
+    "musicbrainz": {
+      "mbid": "6c85f4c3-026c-4c16-9a7c-f546f42ed0fb",
+      "name": "Guided by Voices",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Harold Budd": {
+    "musicbrainz": {
+      "mbid": "5c864a6f-146e-4225-986d-3295ce90f784",
+      "name": "Harold Budd",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "J Dilla": {
+    "musicbrainz": {
+      "mbid": "cbcbb22c-3a8d-46af-b4ba-09c98f0d7931",
+      "name": "J Dilla",
+      "disambiguation": "US producer and rapper aka Jay Dee",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "John Coltrane": {
+    "musicbrainz": {
+      "mbid": "b625448e-bf4a-41c3-a421-72ad46cdb831",
+      "name": "John Coltrane",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Joni Mitchell": {
+    "musicbrainz": {
+      "mbid": "a6de8ef9-b1a1-4756-97aa-481bbb8a4069",
+      "name": "Joni Mitchell",
+      "disambiguation": "",
+      "country": "CA"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Kate Bush": {
+    "musicbrainz": {
+      "mbid": "4b585938-f271-45e2-b19a-91c634b5e396",
+      "name": "Kate Bush",
+      "disambiguation": "",
+      "country": null
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Kendrick Lamar": {
+    "musicbrainz": {
+      "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077",
+      "name": "Kendrick Lamar",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "King Tubby": {
+    "musicbrainz": {
+      "mbid": "576134a6-9f1f-4bfa-af04-4848195849ca",
+      "name": "King Tubby",
+      "disambiguation": "dub/reggae producer Osbourne Ruddock",
+      "country": "JM"
+    },
+    "needs_review": false,
+    "reason": "2 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "d12c2b81-9280-4f89-bc48-822b0440a6ce",
+        "name": "King Tubby",
+        "disambiguation": "Genesis P-Orridge pseudonym",
+        "country": "US"
+      }
+    ],
+    "reviewed": true
+  },
+  "Loscil": {
+    "musicbrainz": {
+      "mbid": "4f2c565b-ac40-4678-ba61-4fcf3b97edbc",
+      "name": "Loscil",
+      "disambiguation": "Canadian ambient musician",
+      "country": "CA"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "MF DOOM": {
+    "musicbrainz": {
+      "mbid": "188711ed-c99b-439c-844a-ca831f63a727",
+      "name": "MF DOOM",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Madvillain": {
+    "musicbrainz": {
+      "mbid": "4e024037-14b7-4aea-99ad-c6ace63b9620",
+      "name": "Madvillain",
+      "disambiguation": "underground hip‐hop duo Madlib and MF DOOM",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Marvin Gaye": {
+    "musicbrainz": {
+      "mbid": "afdb7919-059d-43c1-b668-ba1d265e7e42",
+      "name": "Marvin Gaye",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Massive Attack": {
+    "musicbrainz": {
+      "mbid": "10adbe5e-a2c0-4bf3-8249-2b4cbf6e6ca8",
+      "name": "Massive Attack",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Miles Davis": {
+    "musicbrainz": {
+      "mbid": "561d854a-6a28-4aa7-8c99-323e6ce46c2a",
+      "name": "Miles Davis",
+      "disambiguation": "jazz trumpeter, bandleader, songwriter",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Minutemen": {
+    "musicbrainz": {
+      "mbid": "d4ad0149-d8ae-4105-8009-0221fce9ff35",
+      "name": "Minutemen",
+      "disambiguation": "early 80s US hardcore punk band",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "My Bloody Valentine": {
+    "musicbrainz": {
+      "mbid": "8ca01f46-53ac-4af2-8516-55a909c0905e",
+      "name": "My Bloody Valentine",
+      "disambiguation": "Irish shoegaze band",
+      "country": "IE"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Neu!": {
+    "musicbrainz": {
+      "mbid": "adec1fc3-83c1-48f7-9e49-8347ac6d40b0",
+      "name": "Neu!",
+      "disambiguation": "",
+      "country": "DE"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Nick Drake": {
+    "musicbrainz": {
+      "mbid": "99ea432a-e3d8-42cb-9d5e-db316a6a8458",
+      "name": "Nick Drake",
+      "disambiguation": "English singer‐songwriter",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": "2 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "c57ebf38-079f-40a1-abee-2fee4c276d00",
+        "name": "Nick Drake",
+        "disambiguation": "poet",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "Nina Simone": {
+    "musicbrainz": {
+      "mbid": "2944824d-4c26-476f-a981-be849081942f",
+      "name": "Nina Simone",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Popol Vuh": {
+    "musicbrainz": {
+      "mbid": "2f4bf325-2bbb-4d5f-8681-b0fef130bff0",
+      "name": "Popol Vuh",
+      "disambiguation": "German",
+      "country": "DE"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Portishead": {
+    "musicbrainz": {
+      "mbid": "8f6bd1e4-fbe1-4f50-aa9b-94c450ec0f11",
+      "name": "Portishead",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Radiohead": {
+    "musicbrainz": {
+      "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
+      "name": "Radiohead",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Sigur Ros": {
+    "musicbrainz": {
+      "mbid": "f6f2326f-6b25-4170-b89d-e235b25508e8",
+      "name": "Sigur Rós",
+      "disambiguation": "Icelandic post‐rock band",
+      "country": "IS"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Slint": {
+    "musicbrainz": {
+      "mbid": "2869c510-2679-4a3f-bf15-e5e8b49f2f28",
+      "name": "Slint",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Slowdive": {
+    "musicbrainz": {
+      "mbid": "a16371b9-7d36-497a-a9d4-42b0a0440c5e",
+      "name": "Slowdive",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Stereolab": {
+    "musicbrainz": {
+      "mbid": "f1df0431-9250-4ec8-95d8-f19ce7cf7fb6",
+      "name": "Stereolab",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Steve Reich": {
+    "musicbrainz": {
+      "mbid": "a3031680-c359-458f-a641-70ccbaec6a74",
+      "name": "Steve Reich",
+      "disambiguation": "American composer",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Sufjan Stevens": {
+    "musicbrainz": {
+      "mbid": "01d3c51b-9b98-418a-8d8e-37f6fab59d8c",
+      "name": "Sufjan Stevens",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Sun Ra": {
+    "musicbrainz": {
+      "mbid": "c27cac8e-4c4a-48c0-a4ba-41399b9c176d",
+      "name": "Sun Ra",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Talk Talk": {
+    "musicbrainz": {
+      "mbid": "a74f43e4-50c4-4b19-a2ce-c05ce9bccb03",
+      "name": "Talk Talk",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Terry Riley": {
+    "musicbrainz": {
+      "mbid": "7bf257bf-19a8-4205-8ae8-98511e50b719",
+      "name": "Terry Riley",
+      "disambiguation": "American composer",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "The Ronettes": {
+    "musicbrainz": {
+      "mbid": "393e5448-896f-43e9-b80b-4ee58e1e71a4",
+      "name": "The Ronettes",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "The Velvet Underground": {
+    "musicbrainz": {
+      "mbid": "94b0fb9d-a066-4823-b2ec-af1d324bcfcf",
+      "name": "The Velvet Underground",
+      "disambiguation": "Lou Reed’s seminal rock band",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Wipers": {
+    "musicbrainz": {
+      "mbid": "65aac2dc-216c-4b1a-8501-45567c901c0e",
+      "name": "Wipers",
+      "disambiguation": "",
+      "country": "US"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  },
+  "Wire": {
+    "musicbrainz": {
+      "mbid": "7f2a8098-50e3-451c-8696-c5d9f64f4762",
+      "name": "Wire",
+      "disambiguation": "UK rock band",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": "5 artists share this name; picked by genre tags",
+    "alternatives": [
+      {
+        "mbid": "46f5f4a6-953d-4e22-8f70-73839124f678",
+        "name": "Wire",
+        "disambiguation": "Marshall, Minnesota",
+        "country": "US"
+      },
+      {
+        "mbid": "582748ae-a993-4b14-a2be-199fe8f418e6",
+        "name": "Wire",
+        "disambiguation": "grime producer",
+        "country": null
+      },
+      {
+        "mbid": "c0baf5b0-2d8b-40fe-9eb0-cc4d3927289a",
+        "name": "Wire",
+        "disambiguation": "Elisabeth Pezouvanis",
+        "country": null
+      }
+    ],
+    "reviewed": true
+  },
+  "Young Marble Giants": {
+    "musicbrainz": {
+      "mbid": "3d113367-769f-4200-9ff8-e19d47def451",
+      "name": "Young Marble Giants",
+      "disambiguation": "",
+      "country": "GB"
+    },
+    "needs_review": false,
+    "reason": null,
+    "alternatives": [],
+    "reviewed": true
+  }
+}

@@ -40,6 +40,21 @@ def traced(name: str, **attributes: Any) -> Iterator[Trace]:
         )
 
 
+@contextmanager
+def embedding(name: str, model: str, count: int) -> Iterator[None]:
+    if not enabled():
+        yield
+        return
+
+    with get_client().start_as_current_observation(
+        name=name,
+        as_type="embedding",
+        model=model,
+        input={"texts": count},
+    ):
+        yield
+
+
 def record_scores(trace_id: str | None, scores: Mapping[str, bool]) -> None:
     if trace_id is None or not enabled():
         return

@@ -194,6 +194,27 @@ on, and it was a defect in code written two stages earlier that every eval sweep
 correct — because it *is* correct. The behaviour was right and the reporting was wrong, and
 nothing without traces would have shown that.
 
+## Retrieval corpus
+
+Background on every artist in the library — MusicBrainz facts and the English Wikipedia
+article — split into 627 chunks and embedded with `gemini-embedding-001`. Search is cosine
+similarity in plain Python over a committed file, with
+[no vector database](docs/adr/0002-no-vector-database.md).
+
+```bash
+uv run deadwax-corpus search "who was the singer in Can"
+```
+
+The corpus is a reviewed snapshot rather than something fetched live — see
+[ADR 0008](docs/adr/0008-the-retrieval-corpus-is-a-reviewed-snapshot.md). Several artists share
+their names with others on MusicBrainz, so every ambiguous match is checked by a person before
+any text is fetched, and the eval suite always measures the agent against the same text.
+
+Retrieval reliably finds the right artist, but its similarity scores cannot show whether a
+passage actually answers the question: an irrelevant question about Radiohead scores much like
+a relevant one about Can. Judging that is left to the model, and the eval suite holds it to it.
+The agent does not use the corpus yet — that is the next stage.
+
 ## Evaluation
 
 ```bash
@@ -293,6 +314,10 @@ empty case file and a tool-name typo before either cost a request.
 
 ## Licence
 
-MIT. See [LICENSE](LICENSE).
+The code is MIT. See [LICENSE](LICENSE).
+
+The artist corpus in `src/deadwax/data/corpus/` is not covered by that licence. It contains
+text from Wikipedia under CC BY-SA 4.0 and data from MusicBrainz under CC0, with every chunk
+attributed to its source — see [its README](src/deadwax/data/corpus/README.md).
 
 Built by [David Koen](https://davidkoen.is-a.dev).

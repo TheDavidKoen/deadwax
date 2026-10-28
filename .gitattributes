@@ -5,3 +5,6 @@
 *.webp binary
 *.db binary
 *.sqlite binary
+
+src/deadwax/data/corpus/*.json linguist-generated=true
+src/deadwax/data/corpus/*.jsonl linguist-generated=true
