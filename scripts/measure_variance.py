@@ -3,7 +3,6 @@ import json
 import os
 import sys
 import time
-import warnings
 from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
@@ -11,10 +10,9 @@ from pathlib import Path
 from deadwax.agent import Answer, answer_text, ask
 from deadwax.agent.models import EVAL_MODEL
 from deadwax.config import load_env_file, use_utf8_output
+from deadwax.data import library
 
 OUT_DIR = Path("evals") / "variance"
-
-warnings.filterwarnings("ignore", message=".*fixed sampling defaults.*")
 
 
 def selected_track_ids(calls: list[dict]) -> list[str]:
@@ -128,6 +126,7 @@ def main() -> None:
     args = parser.parse_args()
 
     os.environ.setdefault("DEADWAX_RPM", str(args.rpm))
+    os.environ[library.LIBRARY_VARIABLE] = library.FIXTURES
     use_utf8_output()
     load_env_file()
 

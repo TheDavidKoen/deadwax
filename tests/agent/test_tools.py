@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 
 import pytest
 from langchain_core.messages import ToolMessage
@@ -7,7 +8,7 @@ from deadwax.agent import tools, transcript
 from deadwax.agent.repair_loop import Stop, inspect
 from deadwax.agent.tools import ORDERINGS, _display, check_feasibility, enrich_artist, query_library
 from deadwax.agent.tools import validate_playlist as validate
-from deadwax.data import TRACKS
+from deadwax.data import TRACKS, library
 from deadwax.retrieval.chunking import Chunk
 from deadwax.retrieval.index import Index
 
@@ -234,3 +235,18 @@ def test_retrieved_passages_are_collected_from_the_transcript(queries):
     passages = transcript.retrieved_passages([message])
     assert sorted(passages) == ["can-01", "can-02"]
     assert passages["can-01"]["artist"] == "Can"
+
+
+def test_a_track_with_no_energy_estimate_says_so(monkeypatch):
+    unknown = replace(TRACKS[0], energy=None)
+    monkeypatch.setattr(library, "tracks", lambda: (unknown,))
+    track = search()["tracks"][0]
+    assert track["energy"] is None
+    assert track["energy_provenance"] == tools.NO_ENERGY_ESTIMATE
+
+
+@pytest.mark.parametrize("order_by", ["highest_energy", "lowest_energy"])
+def test_tracks_with_no_energy_estimate_sort_last(monkeypatch, order_by):
+    unknown = replace(TRACKS[0], id="unknown", energy=None)
+    monkeypatch.setattr(library, "tracks", lambda: (unknown, *TRACKS[1:4]))
+    assert search(order_by=order_by)["tracks"][-1]["id"] == "unknown"

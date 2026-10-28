@@ -3,7 +3,7 @@ from functools import cache
 from langchain_core.tools import tool
 
 from deadwax.agent.embeddings import embed_query
-from deadwax.data import TRACKS, Track
+from deadwax.data import Track, library
 from deadwax.data.resolve import normalise
 from deadwax.domain import Constraints, Violation, validator
 from deadwax.retrieval.index import Index, read_index
@@ -12,13 +12,14 @@ from deadwax.retrieval.search import top_k
 PASSAGES_RETURNED = 4
 MIN_DURATION_WINDOW_MS = 120_000
 DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER", "TRACK_TOO_LONG")
-KNOWN_GENRES = sorted({genre for track in TRACKS for genre in track.genres})
+
+NO_ENERGY_ESTIMATE = "no estimate exists for this track"
 
 ORDERINGS = {
     "longest": lambda t: -t.duration_ms,
     "shortest": lambda t: t.duration_ms,
-    "highest_energy": lambda t: -t.energy.value,
-    "lowest_energy": lambda t: t.energy.value,
+    "highest_energy": lambda t: (t.energy is None, -t.energy.value if t.energy else 0.0),
+    "lowest_energy": lambda t: (t.energy is None, t.energy.value if t.energy else 0.0),
 }
 
 
@@ -49,8 +50,8 @@ def _as_dict(track: Track) -> dict:
         "duration_display": _display(track.duration_ms),
         "genres": list(track.genres),
         "release_year": track.release_year,
-        "energy": track.energy.value,
-        "energy_provenance": track.energy.provenance,
+        "energy": track.energy.value if track.energy else None,
+        "energy_provenance": track.energy.provenance if track.energy else NO_ENERGY_ESTIMATE,
         "last_played_at": track.last_played_at.isoformat() if track.last_played_at else None,
     }
 
@@ -101,7 +102,7 @@ def query_library(
 
     matches = [
         t
-        for t in TRACKS
+        for t in library.tracks()
         if (genre is None or genre.lower() in [g.lower() for g in t.genres])
         and (artist is None or artist.lower() in [a.lower() for a in t.artists])
         and (min_duration_ms is None or t.duration_ms >= min_duration_ms)
@@ -120,7 +121,7 @@ def query_library(
         "tracks": [_as_dict(t) for t in matches[:limit]],
     }
     if genre is not None and not matches:
-        result["known_genres"] = KNOWN_GENRES
+        result["known_genres"] = sorted({g for t in library.tracks() for g in t.genres})
     return result
 
 
@@ -159,7 +160,7 @@ def validate_playlist(
     because energy is estimated rather than measured, any answer that mentions it must
     say so.
     """
-    by_id = {t.id: t for t in TRACKS}
+    by_id = {t.id: t for t in library.tracks()}
     unknown = [i for i in track_ids if i not in by_id]
     if unknown:
         return {"ok": False, "unknown_track_ids": unknown}
@@ -268,7 +269,7 @@ def check_feasibility(
         }
 
     outcome = validator.check_feasibility(
-        TRACKS,
+        library.tracks(),
         Constraints(
             min_total_duration_ms=min_total_duration_ms,
             max_track_duration_ms=max_track_duration_ms,

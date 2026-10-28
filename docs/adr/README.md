@@ -22,3 +22,4 @@ that we changed our mind, and why, is the useful part.
 | [0007](0007-where-the-model-never-computes-line-falls.md) | Where the "model never computes" line falls | Accepted |
 | [0008](0008-the-retrieval-corpus-is-a-reviewed-snapshot.md) | The retrieval corpus is a reviewed, committed snapshot | Accepted |
 | [0009](0009-the-models-own-knowledge-is-not-a-source.md) | The model's own knowledge is not a source | Accepted |
+| [0010](0010-real-data-comes-from-spotify-and-musicbrainz-by-isrc.md) | Real data comes from Spotify, with genres from MusicBrainz by ISRC | Accepted |

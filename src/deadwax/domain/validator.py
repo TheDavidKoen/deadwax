@@ -156,15 +156,16 @@ def _duration_under(tracks: Sequence[Track], constraints: Constraints) -> tuple[
 
 def _energy_score(tracks: Sequence[Track], constraints: Constraints) -> tuple[SoftScore, ...]:
     target = constraints.target_energy
-    if target is None or not tracks:
+    estimates = [t.energy for t in tracks if t.energy is not None]
+    if target is None or not estimates:
         return ()
 
-    mean = sum(t.energy.value for t in tracks) / len(tracks)
+    mean = sum(e.value for e in estimates) / len(estimates)
     return (
         SoftScore(
             name="energy",
             score=max(0.0, min(1.0, 1.0 - abs(mean - target))),
-            provenance=tracks[0].energy.provenance,
+            provenance=estimates[0].provenance,
         ),
     )
 

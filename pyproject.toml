@@ -15,6 +15,7 @@ dependencies = [
 [project.scripts]
 deadwax = "deadwax.cli:main"
 deadwax-corpus = "deadwax.corpus:main"
+deadwax-spotify = "deadwax.spotify:main"
 
 [dependency-groups]
 dev = [
