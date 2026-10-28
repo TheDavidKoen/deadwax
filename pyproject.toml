@@ -10,12 +10,14 @@ dependencies = [
     "langchain>=1",
     "langchain-google-genai>=4",
     "langfuse>=4.15.2",
+    "mcp>=2.3.0",
 ]
 
 [project.scripts]
 deadwax = "deadwax.cli:main"
 deadwax-corpus = "deadwax.corpus:main"
 deadwax-spotify = "deadwax.spotify:main"
+deadwax-mcp = "deadwax.mcp.server:main"
 
 [dependency-groups]
 dev = [
@@ -37,6 +39,9 @@ src = ["src", "tests", "evals", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.isort]
+known-third-party = ["mcp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
