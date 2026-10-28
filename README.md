@@ -8,8 +8,8 @@ with a deterministic validator, a repair loop, and an eval suite that reports pa
 rather than pass/fail.
 
 Built as a portfolio piece demonstrating production LLM engineering practice: tool use,
-evaluation and tracing today, with retrieval and an MCP server still to come — see
-[build progress](#build-progress).
+evaluation, tracing, retrieval, real data and an MCP server today, with the site and live
+demo still to come — see [build progress](#build-progress).
 
 ## The interesting part
 
@@ -83,7 +83,7 @@ reads as the build actually happened.
 | C · Making it good | 8 · Tracing | ✅ |
 | C · Making it good | 9 · Retrieval | ✅ `v0.9` |
 | D · Ship | 10 · Real data | ✅ |
-| D · Ship | 11 · MCP server | ⬜ |
+| D · Ship | 11 · MCP server | ✅ |
 | D · Ship | 12 · Site and writeup | ⬜ `v1.0` |
 
 ## Running it
@@ -156,6 +156,50 @@ each track's ISRC rather than by name, and energy is left unknown rather than in
 the real data lacks, and why each gap stays a gap, is in
 [ADR 0010](docs/adr/0010-real-data-comes-from-spotify-and-musicbrainz-by-isrc.md). Spotify's
 Development Mode needs the app owner to have Premium; the fixtures need nothing.
+
+### From Claude Code, over MCP
+
+The same four tools are also an MCP server. The repository's `.mcp.json` registers it, so
+Claude Code started in the repository root offers to connect. To run it by hand:
+
+```bash
+uv run deadwax-mcp
+```
+
+It speaks MCP over stdio, reads `.env` like the CLI, and answers from whichever library
+`DEADWAX_LIBRARY` selects. The tool descriptions are the agent's own, registered by reference
+rather than copied, and the system prompt is sent as the server's instructions. What does not
+travel — the repair-loop supervisor, the step limit, the citation check — is in
+[ADR 0011](docs/adr/0011-over-mcp-the-client-is-the-agent.md).
+
+Asked from Claude Code against the author's real library, on 2026-10-28:
+
+```
+> using deadwax please tell me how many tame impala songs i have
+
+  [deadwax · query_library]
+
+You have 7 Tame Impala tracks, 30:03 in total.
+
+Track                                          Year   Length
+Yes I'm Changing                               2015   4:30
+The Less I Know The Better                     2015   3:36
+Posthumous Forgiveness                         2020   6:06
+Lost In Yesterday                              2020   4:09
+New Gold (with Gorillaz and Bootie Brown)      2023   3:35
+One Night/All Night (with Justice)             2024   4:36
+Dracula (with JENNIE)                          2026   3:29
+
+Three of these are collaborations. Your library credits Tame Impala on them as a
+co-artist, so the artist filter counts them. [...] Both numbers came straight from
+query_library (total_matching and total_duration_display). I didn't add anything up
+myself.
+```
+
+Every number is right, and the client quoted the computed total rather than adding seven
+lengths — a different model, in a different loop, following the tool description. It also
+rewrote two titles: the library has *New Gold (feat. Tame Impala and Bootie Brown)* and *One
+Night/All Night*. The facts came from the tools; the prose belongs to the client.
 
 ## Measuring variance
 

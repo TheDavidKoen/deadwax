@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "deadwax": {
+      "command": "uv",
+      "args": ["run", "deadwax-mcp"]
+    }
+  }
+}
