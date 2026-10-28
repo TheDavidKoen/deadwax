@@ -1,7 +1,7 @@
 import os
 
 from langchain_core.rate_limiters import InMemoryRateLimiter
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 
 FREE_TIER_MODELS = (
     "gemini-3.5-flash",
@@ -13,6 +13,8 @@ FREE_TIER_MODELS = (
 DEFAULT_REQUESTS_PER_MINUTE = 12
 REQUEST_TIMEOUT_SECONDS = 60
 EVAL_MODEL = "gemini-3.5-flash-lite"
+DEFAULT_EMBEDDING_MODEL = "gemini-embedding-001"
+EMBEDDING_DIMENSIONS = 768
 
 _limiter: InMemoryRateLimiter | None = None
 
@@ -52,4 +54,16 @@ def build_model(name: str) -> ChatGoogleGenerativeAI:
         max_retries=0,
         timeout=REQUEST_TIMEOUT_SECONDS,
         rate_limiter=shared_rate_limiter(),
+    )
+
+
+def embedding_model() -> str:
+    return os.environ.get("GEMINI_EMBEDDING_MODEL") or DEFAULT_EMBEDDING_MODEL
+
+
+def build_embeddings() -> GoogleGenerativeAIEmbeddings:
+    return GoogleGenerativeAIEmbeddings(
+        model=embedding_model(),
+        google_api_key=_api_key(),
+        output_dimensionality=EMBEDDING_DIMENSIONS,
     )

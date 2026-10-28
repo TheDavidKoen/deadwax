@@ -20,3 +20,4 @@ that we changed our mind, and why, is the useful part.
 | [0005](0005-the-agent-does-not-decide-when-it-is-finished.md) | The agent does not decide when it is finished | Accepted, amended by 0006 |
 | [0006](0006-an-empty-brief-is-a-question-not-a-playlist.md) | An empty brief is a question, not a playlist | Accepted |
 | [0007](0007-where-the-model-never-computes-line-falls.md) | Where the "model never computes" line falls | Accepted |
+| [0008](0008-the-retrieval-corpus-is-a-reviewed-snapshot.md) | The retrieval corpus is a reviewed, committed snapshot | Accepted |

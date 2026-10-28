@@ -5,7 +5,10 @@ from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
-from deadwax.config import use_utf8_output
+from deadwax.agent import tracing
+from deadwax.agent.embeddings import embed_documents, embed_query
+from deadwax.agent.models import EMBEDDING_DIMENSIONS, embedding_model
+from deadwax.config import load_env_file, use_utf8_output
 from deadwax.data import TRACKS
 from deadwax.data.documents import (
     MUSICBRAINZ_ARTIST,
@@ -21,6 +24,9 @@ from deadwax.data.sources import (
     search_artists,
     wikipedia_article,
 )
+from deadwax.retrieval.chunking import chunk_documents
+from deadwax.retrieval.index import INDEX_FILE, read_index, write_index
+from deadwax.retrieval.search import top_k
 
 CORPUS_DIR = Path(__file__).parent / "data" / "corpus"
 ARTISTS_FILE = CORPUS_DIR / "artists.json"
@@ -146,6 +152,38 @@ def run_fetch(http: Http) -> None:
     print(f"written to {DOCUMENTS_FILE}")
 
 
+def run_index() -> None:
+    documents = read_json(DOCUMENTS_FILE)
+    if not documents:
+        raise SystemExit(f"{DOCUMENTS_FILE} does not exist yet. Run 'fetch' first.")
+
+    chunks = chunk_documents(documents)
+    print(f"{len(chunks)} chunks from {len(documents)} artists", file=sys.stderr)
+    vectors = embed_documents([chunk.text for chunk in chunks])
+    write_index(
+        INDEX_FILE,
+        chunks,
+        vectors,
+        embedding_model(),
+        EMBEDDING_DIMENSIONS,
+        date.today().isoformat(),
+    )
+    print(f"written to {INDEX_FILE}")
+
+
+def run_search(query: str, k: int) -> None:
+    index = read_index()
+    if index.model != embedding_model() or index.dimensions != EMBEDDING_DIMENSIONS:
+        raise SystemExit(
+            f"the index was built with {index.model} at {index.dimensions} dimensions; "
+            f"rebuild it with 'index' before searching"
+        )
+    for hit in top_k(embed_query(query), index.vectors, k):
+        chunk = index.chunks[hit.position]
+        print(f"{hit.score:.3f}  {chunk.id}  [{chunk.section}]")
+        print(f"       {chunk.text.splitlines()[-1][:150]}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="deadwax-corpus",
@@ -164,7 +202,15 @@ def main() -> None:
         "fetch",
         help="download MusicBrainz facts and Wikipedia text for every approved artist",
     )
+    commands.add_parser(
+        "index",
+        help="chunk the documents and embed them into the committed retrieval index",
+    )
+    search = commands.add_parser("search", help="query the index, to check what it retrieves")
+    search.add_argument("query", nargs="+")
+    search.add_argument("-k", type=int, default=5, help="how many chunks to show")
     use_utf8_output()
+    load_env_file()
     args = parser.parse_args()
 
     if args.command == "resolve":
@@ -173,6 +219,11 @@ def main() -> None:
         run_approve()
     if args.command == "fetch":
         run_fetch(Http(CACHE_DIR))
+    if args.command == "index":
+        run_index()
+    if args.command == "search":
+        run_search(" ".join(args.query), args.k)
+    tracing.flush()
 
 
 if __name__ == "__main__":
