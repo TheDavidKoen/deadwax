@@ -1,8 +1,9 @@
 import argparse
 import sys
 
-from deadwax.agent import answer_text, ask, tracing
+from deadwax.agent import answer_text, ask, tracing, transcript
 from deadwax.config import load_env_file, use_utf8_output
+from deadwax.retrieval.citations import cited, source_lines, unretrieved
 
 
 def main() -> None:
@@ -34,7 +35,17 @@ def main() -> None:
     if answer.trace_url:
         print(f"[trace] {answer.trace_url}", file=sys.stderr)
 
-    print(answer_text(answer.messages[-1]) if answer.messages else "")
+    text = answer_text(answer.messages[-1]) if answer.messages else ""
+    print(text)
+
+    passages = transcript.retrieved_passages(answer.messages)
+    citations = cited(text)
+    for chunk_id in unretrieved(citations, passages):
+        print(f"[warning] cited a passage it was never given: {chunk_id}", file=sys.stderr)
+    lines = source_lines(citations, passages)
+    if lines:
+        print("\nSources")
+        print("\n".join(lines))
     tracing.flush()
 
 

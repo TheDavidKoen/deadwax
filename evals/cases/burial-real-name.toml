@@ -1,0 +1,11 @@
+query = "What is Burial's real name?"
+
+[expect]
+tool = "enrich_artist"
+
+[expect.parameters]
+artist = "Burial"
+
+[expect.answer]
+must_contain = ["Bevan"]
+must_cite = true

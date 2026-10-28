@@ -6,7 +6,7 @@ from langchain_google_genai.chat_models import GoogleRateLimitError
 
 from deadwax.agent import repair_loop, tracing, transcript
 from deadwax.agent.models import build_model, model_order
-from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
+from deadwax.agent.tools import TOOLS
 
 MAX_STEPS = 20
 
@@ -15,6 +15,10 @@ SYSTEM_PROMPT = """You are a librarian for the user's personal music collection.
 You answer questions about the library and assemble playlists. You have no knowledge
 of what is in the library except what the tools return, so call a tool before every
 factual claim.
+
+What you know about artists from your own training is not a source. For an artist's
+background, call enrich_artist and answer only from the passages it returns, citing
+them. If they do not answer the question, say your sources do not cover it.
 
 You never do arithmetic. Counts, totals and durations come from tool results only.
 You never decide whether a playlist satisfies its constraints; validate_playlist
@@ -63,7 +67,7 @@ class Answer:
 def build_agent(model_name: str) -> Any:
     return create_agent(
         model=build_model(model_name),
-        tools=[check_feasibility, query_library, validate_playlist],
+        tools=list(TOOLS),
         system_prompt=SYSTEM_PROMPT,
     )
 

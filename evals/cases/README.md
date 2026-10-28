@@ -15,10 +15,19 @@ self-consistent, so provenance is recorded rather than assumed.
 | --- | --- |
 | the original fifteen, stages 5 and 6 | written by hand by the author, before the code they grade was finished |
 | the eight adversarial cases, stage 7 | drafted by an assistant against the fixture data at the author's instruction, then reviewed by the author |
+| the two retrieval cases, stage 9 | drafted by an assistant against the committed corpus at the author's instruction |
 
 The stage 7 eight are `are-there-any-rap-songs`, `radiohead-jazz-tracks`,
 `high-energy-under-five-minutes`, `no-bpm-in-library`, `reggae-playlist-impossible`,
 `exact-duration-demanded`, `hip-hop-playlist-artist-cap` and `unknown-track-asked-about`.
+
+The stage 9 two are `burial-real-name`, whose answer is in the corpus, and
+`jonny-greenwood-film-scores`, whose answer is not. Both facts were checked against
+`documents.json` before the cases were written. None of Radiohead's passages mention film,
+while the model very likely knows the scores from training, so the second case can only pass
+if the agent answers from what it retrieved rather than from memory. It names every
+well-known score in `must_not_contain`, because there are many ways to say "my sources don't
+say" and only one way to fail: naming a film.
 
 Read their scores with that in mind. An assistant drafting a case against data it has just
 inspected is likelier to assert what the system already does than what it ought to do, which
@@ -67,10 +76,16 @@ is the right choice when a case is not about it.
 | key | meaning |
 | --- | --- |
 | `query` | what to ask, verbatim |
-| `expect.tool` | a tool that must be called at least once. One of `check_feasibility`, `query_library`, `validate_playlist` |
+| `expect.tool` | a tool that must be called at least once. One of `check_feasibility`, `query_library`, `validate_playlist`, `enrich_artist` |
 | `expect.parameters` | arguments that must appear together on one call to that tool. A subset — extra arguments are allowed |
 | `expect.answer.must_contain` | facts that must appear in the reply, matched case-insensitively |
+| `expect.answer.must_contain_any` | at least one of these must appear |
 | `expect.answer.must_not_contain` | text that must not appear |
+| `expect.answer.must_cite` | `true` if the reply must cite at least one retrieved passage, such as `[burial-01]` |
+
+Citations are checked in every case, whether or not it sets `must_cite`: a reply that cites a
+passage id the agent was never given fails answer content. That check reads the ids recorded
+in the results file, so `--rescore` applies it too.
 
 ## Why answers are graded on facts rather than sentences
 
