@@ -10,14 +10,15 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from deadwax.agent import answer_text, ask, tracing
+from deadwax.agent import answer_text, ask, tracing, transcript
 from deadwax.agent.models import EVAL_MODEL
-from deadwax.agent.tools import check_feasibility, query_library, validate_playlist
+from deadwax.agent.tools import TOOLS
 from deadwax.config import load_env_file, use_utf8_output
+from deadwax.retrieval.citations import cited, unretrieved
 
 CASES_DIR = Path("evals") / "cases"
 RESULTS_DIR = Path("evals") / "results"
-TOOL_NAMES = {tool.name for tool in (check_feasibility, query_library, validate_playlist)}
+TOOL_NAMES = {tool.name for tool in TOOLS}
 
 warnings.filterwarnings("ignore", message="Model .* uses fixed sampling defaults")
 logging.getLogger("google_genai").setLevel(logging.ERROR)
@@ -32,6 +33,7 @@ class Case:
     must_contain: tuple[str, ...]
     must_contain_any: tuple[str, ...]
     must_not_contain: tuple[str, ...]
+    must_cite: bool
 
 
 @dataclass(frozen=True)
@@ -65,6 +67,7 @@ def load_case(path: Path) -> Case:
         must_contain=tuple(answer.get("must_contain", ())),
         must_contain_any=tuple(answer.get("must_contain_any", ())),
         must_not_contain=tuple(answer.get("must_not_contain", ())),
+        must_cite=answer.get("must_cite", False),
     )
 
 
@@ -81,7 +84,20 @@ def argument_matches(actual: object, expected: object) -> bool:
     return actual == expected
 
 
-def score(case: Case, calls: Sequence[dict], text: str, converged: bool) -> Score:
+def citations_hold(case: Case, text: str, retrieved: Sequence[str]) -> bool:
+    citations = cited(text)
+    if unretrieved(citations, retrieved):
+        return False
+    return not case.must_cite or bool(citations)
+
+
+def score(
+    case: Case,
+    calls: Sequence[dict],
+    text: str,
+    converged: bool,
+    retrieved: Sequence[str] = (),
+) -> Score:
     matching = [call for call in calls if call["name"] == case.expected_tool]
     tool_ok = case.expected_tool is None or bool(matching)
 
@@ -101,6 +117,7 @@ def score(case: Case, calls: Sequence[dict], text: str, converged: bool) -> Scor
         all(fact.lower() in lowered for fact in case.must_contain)
         and (not case.must_contain_any or any(f.lower() in lowered for f in case.must_contain_any))
         and not any(fact.lower() in lowered for fact in case.must_not_contain)
+        and citations_hold(case, text, retrieved)
     )
 
     return Score(tool=tool_ok, parameters=parameters_ok, answer=answer_ok, converged=converged)
@@ -124,7 +141,8 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
 
         calls = answer.tool_calls()
         text = answer_text(answer.messages[-1]) if answer.messages else ""
-        result = score(case, calls, text, answer.converged)
+        retrieved = sorted(transcript.retrieved_passages(answer.messages))
+        result = score(case, calls, text, answer.converged, retrieved)
         tracing.record_scores(answer.trace_id, asdict(result))
         print(
             f"tool={'y' if result.tool else 'n'} "
@@ -143,6 +161,7 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
                 "parameters": result.parameters,
                 "answer": result.answer,
                 "tool_calls": calls,
+                "retrieved": retrieved,
                 "final_text": text,
                 "total_tokens": answer.total_tokens(),
             }
@@ -210,7 +229,13 @@ def rescore(path: Path, cases: dict[str, Case]) -> None:
         for attempt in result["attempts"]:
             if attempt.get("error") is not None:
                 continue
-            fresh = score(case, attempt["tool_calls"], attempt["final_text"], attempt["converged"])
+            fresh = score(
+                case,
+                attempt["tool_calls"],
+                attempt["final_text"],
+                attempt["converged"],
+                attempt.get("retrieved", []),
+            )
             attempt["tool"] = fresh.tool
             attempt["parameters"] = fresh.parameters
             attempt["answer"] = fresh.answer

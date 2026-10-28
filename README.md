@@ -81,7 +81,7 @@ reads as the build actually happened.
 | C · Making it good | 6 · Repair loop | ✅ |
 | C · Making it good | 7 · Adversarial cases | ✅ |
 | C · Making it good | 8 · Tracing | ✅ |
-| C · Making it good | 9 · Retrieval | 🔨 in progress `v0.9` |
+| C · Making it good | 9 · Retrieval | ✅ `v0.9` |
 | D · Ship | 10 · Real data | ⬜ |
 | D · Ship | 11 · MCP server | ⬜ |
 | D · Ship | 12 · Site and writeup | ⬜ `v1.0` |
@@ -213,7 +213,36 @@ any text is fetched, and the eval suite always measures the agent against the sa
 Retrieval reliably finds the right artist, but its similarity scores cannot show whether a
 passage actually answers the question: an irrelevant question about Radiohead scores much like
 a relevant one about Can. Judging that is left to the model, and the eval suite holds it to it.
-The agent does not use the corpus yet — that is the next stage.
+
+### Answering from it
+
+The agent reaches the corpus through one tool, `enrich_artist(artist, question)`, which ranks
+only that artist's passages and returns the best four with their sources. Answers cite them by
+id, and the CLI turns each citation into a source line:
+
+```
+$ uv run deadwax "What is Burial's real name?"
+Burial's real name is William Emmanuel Bevan [burial-01].
+
+Sources
+[burial-01] Burial, Introduction. https://en.wikipedia.org/wiki/Burial_%28musician%29 (CC BY-SA 4.0)
+```
+
+**What the model already knows does not count.** The artists here are famous, so the model
+could answer most background questions from training, and an answer from memory looks exactly
+like one from retrieval. So only retrieved passages are a source, and when they are silent the
+agent says so:
+
+```
+$ uv run deadwax "Which films has Jonny Greenwood from Radiohead scored?"
+My sources do not cover which films Jonny Greenwood has scored.
+```
+
+It almost certainly knows the answer. That reply is less helpful and much more trustworthy,
+and it is the one eval case that can only pass if retrieval, not memory, is the source.
+Citations are checked in code: a reply that cites a passage the agent was never given fails
+its eval case and gets a warning instead of a source line. See
+[ADR 0009](docs/adr/0009-the-models-own-knowledge-is-not-a-source.md).
 
 ## Evaluation
 
@@ -221,20 +250,22 @@ The agent does not use the corpus yet — that is the next stage.
 uv run evals/runner.py
 ```
 
-23 cases in `evals/cases/`, each run three times, scored on three dimensions separately.
+25 cases in `evals/cases/`, each run three times, scored on three dimensions separately.
 Cases are TOML read with `tomllib` — a read-only parser, so no code in this repository can
 write one at runtime.
 
 The first fifteen were written by hand by the author, before the code they grade was
 finished. The eight adversarial cases added at stage 7 were drafted by an assistant against
-the fixture data and reviewed by the author. `evals/cases/README.md` records which is which,
+the fixture data and reviewed by the author, and the two retrieval cases at stage 9 were
+drafted by an assistant against the corpus. `evals/cases/README.md` records which is which,
 because a suite that grades its own author's code is worth less than one that does not, and
 saying so is cheaper than being caught.
 
-`gemini-3.5-flash-lite` pinned. The current suite is 23 cases; the three rows above the rule
-are the 15-case suite, kept because each was measured against the one before it. A number
-from a 23-case run is not comparable to one from a 15-case run — the denominator changed on
-purpose.
+`gemini-3.5-flash-lite` pinned. The current suite is 25 cases. Earlier rows used the 15- and
+23-case suites and are kept because each was measured against the one before it. A number
+from one suite is not comparable to a number from another — the denominator changed on
+purpose. The last row also gives the 23 older cases on their own, which is the like-for-like
+comparison with the row above it.
 
 | | cases | tool selection | parameters | answer content | convergence |
 | --- | --- | --- | --- | --- | --- |
@@ -246,7 +277,10 @@ purpose.
 | stage 8 · tracing | 23 | 100% | 96% | 87% | 100% |
 | — | | | | | |
 | stage 8, rescored against corrected cases | 23 | 100% | 96% | 71% | 100% |
-| **refusal arithmetic fixed** | **23** | **100%** | **100%** | **96%** | **100%** |
+| refusal arithmetic fixed | 23 | 100% | 100% | 96% | 100% |
+| — | | | | | |
+| **stage 9 · retrieval** | **25** | **100%** | **99%** | **95%** | **100%** |
+| the same sweep, older 23 cases only | 23 | 100% | 100% | 94% | 100% |
 
 The stage 7 and stage 8 rows measure the same behaviour; only the sample differs. The stage 7
 sweep lost 4 of 69 attempts to provider `504`s, which are excluded from every rate, while the
@@ -290,8 +324,20 @@ each fix sits where it does.
   returns the tags the library uses, and the model decides whether the user's word is another
   name for one. No synonym table exists in code, because that judgement is about language.
 
-One case stays red on purpose. **`never-played-count`** has no play-history filter to call, so
-the agent refuses — it is the one case proving the system refuses rather than confabulates.
+One case is still red. **`never-played-count`** asks about play history, which no tool can
+filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
+to the same question, and the true count is 41. Since stage 9 it refuses all three times —
+*"my tools do not track play counts"* — after a prompt change about artist background that
+never mentions the library. That is better behaviour, but the case stays red, because the data
+exists and the fix is a filter on `query_library`.
+
+Stage 9 added the two retrieval cases, and both answered correctly every time. The one
+parameter miss is `jonny-greenwood-film-scores`, where one run out of three stopped at "Jonny
+Greenwood is not in your library" instead of retrying with Radiohead. The reply was still
+honest, so only the parameter check caught it. The one other drop is a refusal in
+`hip-hop-playlist-artist-cap` that named the field `min_total_duration_ms` to the user, one
+run out of three, in a case that was clean on 17 September. Three runs cannot separate a
+regression from variance.
 
 Case keys have been corrected three times, each for grading wording rather than fact, and
 each recorded in `evals/cases/README.md`. Every correction was applied to the "before" sweep

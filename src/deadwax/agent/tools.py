@@ -1,8 +1,15 @@
+from functools import cache
+
 from langchain_core.tools import tool
 
+from deadwax.agent.embeddings import embed_query
 from deadwax.data import TRACKS, Track
+from deadwax.data.resolve import normalise
 from deadwax.domain import Constraints, Violation, validator
+from deadwax.retrieval.index import Index, read_index
+from deadwax.retrieval.search import top_k
 
+PASSAGES_RETURNED = 4
 MIN_DURATION_WINDOW_MS = 120_000
 DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER", "TRACK_TOO_LONG")
 KNOWN_GENRES = sorted({genre for track in TRACKS for genre in track.genres})
@@ -46,6 +53,11 @@ def _as_dict(track: Track) -> dict:
         "energy_provenance": track.energy.provenance,
         "last_played_at": track.last_played_at.isoformat() if track.last_played_at else None,
     }
+
+
+@cache
+def _corpus() -> Index:
+    return read_index()
 
 
 @tool
@@ -274,3 +286,53 @@ def check_feasibility(
         "max_achievable_display": _display(outcome.max_achievable_ms),
         "requested_min_ms": outcome.requested_min_ms,
     }
+
+
+@tool
+def enrich_artist(artist: str, question: str) -> dict:
+    """Look up background on one artist in the user's library, from published sources.
+
+    Call this for any question about an artist's history, members, origins, influences
+    or career. Pass the artist's name and the user's question. It returns the passages
+    from MusicBrainz and Wikipedia that best match the question.
+
+    Answer only from these passages. If they do not contain the answer, tell the user
+    your sources do not cover it, even if you believe you know. Never fill the gap from
+    your own knowledge.
+
+    Cite every passage you use by its id in square brackets, such as [can-03], straight
+    after the claim it supports. Never cite an id this tool did not return.
+
+    This tool knows nothing about the user's tracks. Use query_library for those.
+    """
+    index = _corpus()
+    wanted = normalise(artist)
+    positions = [p for p, chunk in enumerate(index.chunks) if normalise(chunk.artist) == wanted]
+    if not positions:
+        return {
+            "unknown_artist": artist,
+            "known_artists": sorted({chunk.artist for chunk in index.chunks}),
+            "remedy": (
+                "there is no background on artists outside the user's library: say so, "
+                "or retry with one of known_artists if the user meant one of them"
+            ),
+        }
+
+    hits = top_k(embed_query(question), [index.vectors[p] for p in positions], PASSAGES_RETURNED)
+    chunks = [index.chunks[positions[hit.position]] for hit in hits]
+    return {
+        "artist": chunks[0].artist,
+        "passages": [
+            {
+                "id": chunk.id,
+                "section": chunk.section,
+                "text": chunk.text,
+                "source": chunk.source,
+                "licence": chunk.licence,
+            }
+            for chunk in chunks
+        ],
+    }
+
+
+TOOLS = (check_feasibility, query_library, validate_playlist, enrich_artist)

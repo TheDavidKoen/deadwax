@@ -41,3 +41,12 @@ def tool_results(messages: Sequence[Any]) -> list[tuple[str, dict]]:
         if isinstance(payload, dict):
             results.append((message.name, payload))
     return results
+
+
+def retrieved_passages(messages: Sequence[Any]) -> dict[str, dict]:
+    return {
+        passage["id"]: {**passage, "artist": result["artist"]}
+        for name, result in tool_results(messages)
+        if name == "enrich_artist"
+        for passage in result.get("passages", [])
+    }

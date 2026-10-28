@@ -3,10 +3,13 @@ import json
 import pytest
 from langchain_core.messages import ToolMessage
 
+from deadwax.agent import tools, transcript
 from deadwax.agent.repair_loop import Stop, inspect
-from deadwax.agent.tools import ORDERINGS, _display, check_feasibility, query_library
+from deadwax.agent.tools import ORDERINGS, _display, check_feasibility, enrich_artist, query_library
 from deadwax.agent.tools import validate_playlist as validate
 from deadwax.data import TRACKS
+from deadwax.retrieval.chunking import Chunk
+from deadwax.retrieval.index import Index
 
 ORDER_CASES = [
     ("longest", "duration_ms", True),
@@ -145,3 +148,89 @@ def test_a_genre_search_that_finds_nothing_offers_the_library_vocabulary():
 
 def test_a_genre_search_that_finds_tracks_does_not_offer_the_vocabulary():
     assert "known_genres" not in search(genre="hip hop")
+
+
+def passage(chunk_id: str, artist: str) -> Chunk:
+    return Chunk(
+        id=chunk_id,
+        artist=artist,
+        section="Introduction",
+        text=f"{artist} — Introduction\ntext of {chunk_id}",
+        source=f"https://en.wikipedia.org/wiki/{artist}",
+        licence="CC BY-SA 4.0",
+    )
+
+
+FAKE_CORPUS = Index(
+    model="fake",
+    dimensions=2,
+    built="2026-10-28",
+    chunks=(
+        passage("can-01", "Can"),
+        passage("can-02", "Can"),
+        passage("bjork-01", "Bjork"),
+    ),
+    vectors=((0.0, 1.0), (1.0, 0.0), (1.0, 0.0)),
+)
+
+
+@pytest.fixture
+def queries(monkeypatch) -> list[str]:
+    sent: list[str] = []
+
+    def fake_embed_query(text: str) -> list[float]:
+        sent.append(text)
+        return [1.0, 0.0]
+
+    monkeypatch.setattr(tools, "_corpus", lambda: FAKE_CORPUS)
+    monkeypatch.setattr(tools, "embed_query", fake_embed_query)
+    return sent
+
+
+def enrich(**kwargs) -> dict:
+    return enrich_artist.invoke(kwargs)
+
+
+def test_only_the_named_artists_passages_are_returned(queries):
+    result = enrich(artist="Can", question="who founded them")
+    assert {p["id"] for p in result["passages"]} == {"can-01", "can-02"}
+
+
+def test_passages_are_ranked_by_how_well_they_match_the_question(queries):
+    result = enrich(artist="Can", question="who founded them")
+    assert [p["id"] for p in result["passages"]] == ["can-02", "can-01"]
+
+
+def test_no_more_than_the_passage_limit_is_returned(queries, monkeypatch):
+    monkeypatch.setattr(tools, "PASSAGES_RETURNED", 1)
+    assert len(enrich(artist="Can", question="anything")["passages"]) == 1
+
+
+def test_an_artist_is_found_whatever_the_case_or_accents(queries):
+    assert enrich(artist="BJÖRK", question="where is she from")["artist"] == "Bjork"
+
+
+def test_every_passage_carries_its_source_and_licence(queries):
+    for p in enrich(artist="Can", question="anything")["passages"]:
+        assert p["source"].startswith("https://")
+        assert p["licence"]
+
+
+def test_the_question_is_what_gets_embedded(queries):
+    enrich(artist="Can", question="when did they split up")
+    assert queries == ["when did they split up"]
+
+
+def test_an_artist_outside_the_library_is_refused_without_a_model_call(queries):
+    result = enrich(artist="Oasis", question="who is in the band")
+    assert result["unknown_artist"] == "Oasis"
+    assert result["known_artists"] == ["Bjork", "Can"]
+    assert queries == []
+
+
+def test_retrieved_passages_are_collected_from_the_transcript(queries):
+    result = enrich(artist="Can", question="anything")
+    message = ToolMessage(json.dumps(result), name="enrich_artist", tool_call_id="1")
+    passages = transcript.retrieved_passages([message])
+    assert sorted(passages) == ["can-01", "can-02"]
+    assert passages["can-01"]["artist"] == "Can"

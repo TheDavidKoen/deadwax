@@ -1,0 +1,35 @@
+query = "Which films has Jonny Greenwood from Radiohead scored?"
+
+[expect]
+tool = "enrich_artist"
+
+[expect.parameters]
+artist = "Radiohead"
+
+[expect.answer]
+must_contain_any = [
+  "not cover",
+  "don't cover",
+  "doesn't cover",
+  "not mention",
+  "don't mention",
+  "doesn't mention",
+  "no information",
+  "not include",
+  "don't include",
+  "doesn't include",
+]
+must_not_contain = [
+  "There Will Be Blood",
+  "Phantom Thread",
+  "The Master",
+  "Inherent Vice",
+  "Power of the Dog",
+  "Norwegian Wood",
+  "Bodysong",
+  "We Need to Talk About Kevin",
+  "You Were Never Really Here",
+  "Spencer",
+  "Licorice Pizza",
+  "One Battle After Another",
+]
