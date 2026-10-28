@@ -82,7 +82,7 @@ reads as the build actually happened.
 | C · Making it good | 7 · Adversarial cases | ✅ |
 | C · Making it good | 8 · Tracing | ✅ |
 | C · Making it good | 9 · Retrieval | ✅ `v0.9` |
-| D · Ship | 10 · Real data | ⬜ |
+| D · Ship | 10 · Real data | ✅ |
 | D · Ship | 11 · MCP server | ⬜ |
 | D · Ship | 12 · Site and writeup | ⬜ `v1.0` |
 
@@ -124,6 +124,38 @@ Free-tier limits are per model and differ by an order of magnitude between them.
 account's actual numbers are at
 [aistudio.google.com/rate-limit](https://aistudio.google.com/rate-limit); Google no longer
 publishes a per-model table in the API documentation.
+
+### Against your own Spotify library
+
+The fixtures are the default and need no Spotify account. To run the same agent over your own
+saved tracks, create an app at [developer.spotify.com](https://developer.spotify.com/dashboard)
+with the redirect URI `http://127.0.0.1:8888/callback`, put its client ID in `.env` as
+`SPOTIFY_CLIENT_ID`, then:
+
+```bash
+uv run deadwax-spotify login
+```
+
+```bash
+uv run deadwax-spotify pull
+```
+
+`login` opens Spotify in the browser, asking for read-only access, using PKCE, so no client
+secret exists to leak. `pull` writes `data/library.sqlite`, which is gitignored. Set
+`DEADWAX_LIBRARY=data/library.sqlite` in `.env` and every tool reads it instead of the
+fixtures; the `[library]` line on stderr says which one answered.
+
+```
+$ uv run deadwax "what is my most played song?"
+Your library does not track play counts or listening history, so I cannot tell you which
+song is your most played.
+```
+
+Spotify no longer publishes genres or energy, so genres come from MusicBrainz, matched by
+each track's ISRC rather than by name, and energy is left unknown rather than invented. What
+the real data lacks, and why each gap stays a gap, is in
+[ADR 0010](docs/adr/0010-real-data-comes-from-spotify-and-musicbrainz-by-isrc.md). Spotify's
+Development Mode needs the app owner to have Premium; the fixtures need nothing.
 
 ## Measuring variance
 
@@ -264,8 +296,8 @@ saying so is cheaper than being caught.
 `gemini-3.5-flash-lite` pinned. The current suite is 25 cases. Earlier rows used the 15- and
 23-case suites and are kept because each was measured against the one before it. A number
 from one suite is not comparable to a number from another — the denominator changed on
-purpose. The last row also gives the 23 older cases on their own, which is the like-for-like
-comparison with the row above it.
+purpose. The stage 9 sweep is also scored on the 23 older cases alone, which is the
+like-for-like comparison with the row above it.
 
 | | cases | tool selection | parameters | answer content | convergence |
 | --- | --- | --- | --- | --- | --- |
@@ -279,14 +311,15 @@ comparison with the row above it.
 | stage 8, rescored against corrected cases | 23 | 100% | 96% | 71% | 100% |
 | refusal arithmetic fixed | 23 | 100% | 100% | 96% | 100% |
 | — | | | | | |
-| **stage 9 · retrieval** | **25** | **100%** | **99%** | **95%** | **100%** |
+| stage 9 · retrieval | 25 | 100% | 99% | 95% | 100% |
 | the same sweep, older 23 cases only | 23 | 100% | 100% | 94% | 100% |
+| **stage 10 · real data, fixtures still graded** | **25** | **100%** | **99%** | **95%** | **100%** |
 
 The stage 7 and stage 8 rows measure the same behaviour; only the sample differs. The stage 7
 sweep lost 4 of 69 attempts to provider `504`s, which are excluded from every rate, while the
 stage 8 sweep was the first with zero transport errors.
 
-The last two rows are the most recent comparison, and both are graded by the same case files.
+The two rows after the stage 8 sweep are graded by the same case files.
 An audit found that the refusal cases never checked for raw milliseconds, and 11 of 12 refusal
 answers contained them. Adding that check and rescoring the committed stage 8 sweep — at no
 API cost — dropped its answer content from 87% to 71%. That drop is not a regression. It is
@@ -326,10 +359,13 @@ each fix sits where it does.
 
 One case is still red. **`never-played-count`** asks about play history, which no tool can
 filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
-to the same question, and the true count is 41. Since stage 9 it refuses all three times —
-*"my tools do not track play counts"* — after a prompt change about artist background that
-never mentions the library. That is better behaviour, but the case stays red, because the data
-exists and the fix is a filter on `query_library`.
+to the same question, and the true count is 41. In the stage 9 sweep it refused all three
+times — *"my tools do not track play counts"* — after a prompt change about artist background
+that never mentions the library. In the stage 10 sweep it refused twice, and once fetched all
+100 tracks and counted the empty `last_played_at` fields itself: *"You have 26 tracks … that
+you have never played."* That is rule 1 broken in the open, with a wrong answer to show for
+it. The refusals were never a fix. The fix is a filter on `query_library`, so that Python
+does the counting.
 
 Stage 9 added the two retrieval cases, and both answered correctly every time. The one
 parameter miss is `jonny-greenwood-film-scores`, where one run out of three stopped at "Jonny
@@ -338,6 +374,20 @@ honest, so only the parameter check caught it. The one other drop is a refusal i
 `hip-hop-playlist-artist-cap` that named the field `min_total_duration_ms` to the user, one
 run out of three, in a case that was clean on 17 September. Three runs cannot separate a
 regression from variance.
+
+Stage 10 put a SQLite store and a real Spotify library behind the tools, and changed no prompt
+and no tool description. On the fixtures every tool returns exactly what it did before, so the
+stage 10 sweep is the same inputs graded a second time. The overall scores came out identical,
+and three cases still moved:
+
+- `hip-hop-playlist-artist-cap` was clean again.
+- `high-energy-under-five-minutes` built a correct playlist once without saying that energy is
+  an estimate.
+- `never-played-count` produced the invented 26.
+
+That is the clearest picture of variance this suite has produced. The aggregate holds steady
+while individual cases move, which is why no single case's change between two sweeps counts
+as evidence on its own. One attempt in 75 was lost to a provider `503` and is excluded.
 
 Case keys have been corrected three times, each for grading wording rather than fact, and
 each recorded in `evals/cases/README.md`. Every correction was applied to the "before" sweep

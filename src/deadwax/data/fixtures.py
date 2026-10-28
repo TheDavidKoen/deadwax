@@ -18,7 +18,7 @@ class Track:
     duration_ms: int
     genres: tuple[str, ...]
     release_year: int
-    energy: Inferred
+    energy: Inferred | None
     added_at: date
     last_played_at: date | None
 

@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 from deadwax.data import TRACKS
@@ -104,6 +106,18 @@ def test_inferred_energy_is_scored_and_never_enforced():
     assert len(result.soft_scores) == 1
     assert result.soft_scores[0].name == "energy"
     assert result.soft_scores[0].provenance
+
+
+def test_tracks_with_no_energy_estimate_are_left_out_of_the_score():
+    unknown = replace(BY_ID["t003"], energy=None)
+    alone = validate(playlist("t001"), Constraints(target_energy=0.5))
+    mixed = validate([BY_ID["t001"], unknown], Constraints(target_energy=0.5))
+    assert mixed.soft_scores == alone.soft_scores
+
+
+def test_a_playlist_with_no_energy_estimates_has_no_energy_score():
+    unknown = [replace(BY_ID["t001"], energy=None)]
+    assert validate(unknown, Constraints(target_energy=0.5)).soft_scores == ()
 
 
 def test_an_impossible_brief_is_infeasible_before_generation():

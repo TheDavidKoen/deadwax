@@ -63,6 +63,20 @@ def lookup_artist(http: Http, mbid: str) -> dict:
     return http.get_json(f"{MUSICBRAINZ}/artist/{mbid}?inc=url-rels+tags&fmt=json")
 
 
+def recordings_by_isrc(http: Http, isrc: str) -> list[dict]:
+    url = f"{MUSICBRAINZ}/isrc/{urllib.parse.quote(isrc)}?inc=artists&fmt=json"
+    try:
+        return http.get_json(url).get("recordings", [])
+    except urllib.error.HTTPError as error:
+        if error.code == 404:
+            return []
+        raise
+
+
+def artist_with_genres(http: Http, mbid: str) -> dict:
+    return http.get_json(f"{MUSICBRAINZ}/artist/{mbid}?inc=genres&fmt=json")
+
+
 def english_wikipedia_title(http: Http, wikidata_id: str) -> str | None:
     payload = http.get_json(f"{WIKIDATA_ENTITY}/{wikidata_id}.json")
     entity = next(iter(payload.get("entities", {}).values()), {})

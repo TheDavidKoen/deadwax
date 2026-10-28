@@ -1,4 +1,6 @@
+import logging
 import os
+import warnings
 
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
@@ -15,6 +17,9 @@ REQUEST_TIMEOUT_SECONDS = 60
 EVAL_MODEL = "gemini-3.5-flash-lite"
 DEFAULT_EMBEDDING_MODEL = "gemini-embedding-001"
 EMBEDDING_DIMENSIONS = 768
+
+warnings.filterwarnings("ignore", message="Model .* uses fixed sampling defaults")
+logging.getLogger("google_genai").setLevel(logging.ERROR)
 
 _limiter: InMemoryRateLimiter | None = None
 

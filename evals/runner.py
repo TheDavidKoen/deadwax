@@ -1,10 +1,8 @@
 import argparse
 import json
-import logging
 import os
 import sys
 import tomllib
-import warnings
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
@@ -14,14 +12,12 @@ from deadwax.agent import answer_text, ask, tracing, transcript
 from deadwax.agent.models import EVAL_MODEL
 from deadwax.agent.tools import TOOLS
 from deadwax.config import load_env_file, use_utf8_output
+from deadwax.data import library
 from deadwax.retrieval.citations import cited, unretrieved
 
 CASES_DIR = Path("evals") / "cases"
 RESULTS_DIR = Path("evals") / "results"
 TOOL_NAMES = {tool.name for tool in TOOLS}
-
-warnings.filterwarnings("ignore", message="Model .* uses fixed sampling defaults")
-logging.getLogger("google_genai").setLevel(logging.ERROR)
 
 
 @dataclass(frozen=True)
@@ -302,6 +298,7 @@ def main() -> None:
         return
 
     os.environ.setdefault("DEADWAX_RPM", str(args.rpm))
+    os.environ[library.LIBRARY_VARIABLE] = library.FIXTURES
     use_utf8_output()
     load_env_file()
 
