@@ -42,11 +42,12 @@ is the specific bias the original hand-written rule existed to avoid.
 | `contradictory-duration` | added `"not possible"` to `must_contain_any` | an assistant, approved by the author |
 | `contradictory-duration` | replaced `"here are"` in `must_not_contain` with `"here are your"` and `"here are the"` | an assistant, approved by the author |
 
-The `"here are"` ban was meant to catch a list of tracks being offered. Substring matching
-also found it inside *"There are no tracks"*, which is a correct refusal. The narrower phrases
-still catch the offer. `"0 tracks"` was deliberately not added to the accepted phrases,
-although it means the same as `"no tracks"`. Loosening a key straight after reading the
-answers it would pass is the move that makes a pass rate untrustworthy.
+The millisecond ban covers four cases, the first two from the author's original fifteen. It
+followed an audit that found 11 of 12 refusal answers quoting raw milliseconds or converting
+them by hand — several converted wrongly, all of them graded green. It is additive: it forbids
+a failure the cases never checked for and loosens nothing. Rescoring the last committed sweep
+against the edited cases dropped answer content from 87% to 71%, which is the honest baseline
+for the fix that followed.
 
 The `radiohead-jazz-tracks` key banned the band's track names to catch them being presented
 as jazz. Once the agent began explaining *what the tracks actually are* — *"four Radiohead
@@ -54,12 +55,11 @@ tracks … and their genres are art rock and electronic"* — the ban failed a c
 Substring matching cannot tell "these are jazz" from "these are not jazz". Both sweeps were
 rescored against the corrected key, so the before and after remain comparable.
 
-The first two are from the author's original fifteen. The change followed an audit that
-found 11 of 12 refusal answers quoting raw milliseconds or converting them by hand — several
-converted wrongly, all of them graded green. It is additive: it forbids a failure the cases
-never checked for and loosens nothing. Rescoring the last committed sweep against the edited
-cases dropped answer content from 87% to 71%, which is the honest baseline for the fix that
-followed.
+The `"here are"` ban was meant to catch a list of tracks being offered. Substring matching
+also found it inside *"There are no tracks"*, which is a correct refusal. The narrower phrases
+still catch the offer. `"0 tracks"` was deliberately not added to the accepted phrases,
+although it means the same as `"no tracks"`. Loosening a key straight after reading the
+answers it would pass is the move that makes a pass rate untrustworthy.
 
 ## Schema
 
@@ -125,11 +125,12 @@ must_not_contain = ["no one knows", "go with the flow", "little sister"]
 Real titles by that artist, none of which are in the library. Scored 100% immediately,
 because it stopped grading English and started grading the failure it actually cares about.
 
-## Three dimensions, scored separately
+## Dimensions, scored separately
 
 **Tool selection**, **parameter extraction** and **answer content** are reported as separate
 pass rates, because they fail differently. The right tool with wrong arguments is a different
-bug from the wrong tool, and a single number hides which one you have.
+bug from the wrong tool, and a single number hides which one you have. **Convergence** is
+reported beside them: whether the run finished at all.
 
 Each case runs three times by default and reports a **pass rate**, not pass/fail. One pass on
 a system measured to be non-deterministic is an anecdote.
@@ -160,10 +161,10 @@ CI runs.
 uv run evals/runner.py
 ```
 
-The real thing. 15 cases at 3 repeats is 45 runs. Measured from a recorded sweep, that is
-**125 requests** — 2.8 model calls per run, not the 5 originally assumed. Count them from the
-results file rather than estimating; free-tier budgets are small enough that the difference
-decides whether a sweep fits in a day.
+The real thing. 25 cases at 3 repeats is 75 runs, about **210 requests** at the 2.8 model
+calls per run measured from recorded sweeps — not the 5 originally assumed. Count them from
+the results file rather than estimating; free-tier budgets are small enough that the
+difference decides whether a sweep fits in a day.
 
 ```bash
 uv run evals/runner.py --case counts-jazz-tracks --repeats 1
@@ -177,5 +178,5 @@ uv run evals/runner.py --rescore evals/results/<file>.json
 
 Re-grades a recorded sweep against the current cases, with **no API calls**. The runner
 stores every tool call and reply, not just a verdict, so correcting an answer key costs
-nothing — fix the key, rescore, done. Use this rather than re-running 225 requests to find
-out whether your fix worked.
+nothing — fix the key, rescore, done. Use this rather than re-running a 210-request sweep to
+find out whether your fix worked.

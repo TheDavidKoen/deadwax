@@ -6,7 +6,13 @@ from langchain_core.messages import ToolMessage
 
 from deadwax.agent import tools, transcript
 from deadwax.agent.repair_loop import Stop, inspect
-from deadwax.agent.tools import ORDERINGS, _display, check_feasibility, enrich_artist, query_library
+from deadwax.agent.tools import (
+    ORDERINGS,
+    check_feasibility,
+    display_duration,
+    enrich_artist,
+    query_library,
+)
 from deadwax.agent.tools import validate_playlist as validate
 from deadwax.data import TRACKS, library
 from deadwax.retrieval.chunking import Chunk
@@ -32,7 +38,7 @@ def test_a_track_carries_its_energy_and_where_the_value_came_from():
 
 def test_a_set_of_tracks_carries_a_readable_total():
     result = search(genre="jazz")
-    assert result["total_duration_display"] == _display(result["total_duration_ms"])
+    assert result["total_duration_display"] == display_duration(result["total_duration_ms"])
 
 
 @pytest.mark.parametrize(("order_by", "field", "descending"), ORDER_CASES)
@@ -56,8 +62,8 @@ def test_an_unknown_ordering_is_reported_rather_than_raised():
 
 
 def test_a_total_over_an_hour_displays_hours():
-    assert _display(6_085_000) == "1:41:25"
-    assert _display(251_000) == "4:11"
+    assert display_duration(6_085_000) == "1:41:25"
+    assert display_duration(251_000) == "4:11"
 
 
 def as_tool_message(name: str, payload: dict) -> ToolMessage:
@@ -108,7 +114,7 @@ def test_a_count_violation_carries_no_duration_display():
 def test_a_track_length_violation_carries_a_readable_adjustment():
     result = validate.invoke({"track_ids": ["t002"], "max_track_duration_ms": 300_000})
     violation = next(v for v in result["violations"] if v["code"] == "TRACK_TOO_LONG")
-    assert violation["adjust_by_display"] == _display(abs(violation["adjust_by"]))
+    assert violation["adjust_by_display"] == display_duration(abs(violation["adjust_by"]))
 
 
 def test_an_infeasible_brief_reports_its_limit_readably():
@@ -116,7 +122,7 @@ def test_an_infeasible_brief_reports_its_limit_readably():
         {"required_genres": ["hip hop"], "min_total_duration_ms": 1_800_000}
     )
     assert result["feasible"] is False
-    assert result["max_achievable_display"] == _display(result["max_achievable_ms"])
+    assert result["max_achievable_display"] == display_duration(result["max_achievable_ms"])
 
 
 def test_a_target_energy_is_scored_with_its_provenance():

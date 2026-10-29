@@ -2,7 +2,7 @@ import sqlite3
 from collections.abc import Iterable
 from datetime import date
 
-from deadwax.data.fixtures import Inferred, Track
+from deadwax.data.track import Inferred, Track
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS tracks (

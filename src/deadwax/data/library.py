@@ -3,8 +3,9 @@ from contextlib import closing
 from functools import cache
 from pathlib import Path
 
-from deadwax.data.fixtures import TRACKS, Track
+from deadwax.data.fixtures import TRACKS
 from deadwax.data.store import connect, read_tracks
+from deadwax.data.track import Track
 
 FIXTURES = "fixtures"
 LIBRARY_VARIABLE = "DEADWAX_LIBRARY"

@@ -8,7 +8,7 @@ from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 
-from deadwax.agent import answer_text, ask, tracing, transcript
+from deadwax.agent import ask, tracing
 from deadwax.agent.models import EVAL_MODEL
 from deadwax.agent.tools import TOOLS
 from deadwax.config import load_env_file, use_utf8_output
@@ -136,8 +136,8 @@ def run_case(case: Case, repeats: int, model: str) -> list[dict]:
             continue
 
         calls = answer.tool_calls()
-        text = answer_text(answer.messages[-1]) if answer.messages else ""
-        retrieved = sorted(transcript.retrieved_passages(answer.messages))
+        text = answer.final_text()
+        retrieved = sorted(answer.passages())
         result = score(case, calls, text, answer.converged, retrieved)
         tracing.record_scores(answer.trace_id, asdict(result))
         print(

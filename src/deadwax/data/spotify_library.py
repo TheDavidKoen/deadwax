@@ -3,7 +3,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime
 
-from deadwax.data.fixtures import Track
+from deadwax.data.track import Track
 
 ISRC = re.compile(r"[A-Z]{2}[A-Z0-9]{3}[0-9]{7}")
 

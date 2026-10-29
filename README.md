@@ -2,14 +2,17 @@
 
 [![CI](https://github.com/TheDavidKoen/deadwax/actions/workflows/ci.yml/badge.svg)](https://github.com/TheDavidKoen/deadwax/actions/workflows/ci.yml)
 
-An agentic music librarian over a personal listening history. It answers natural-language
-questions about what you have listened to, and builds playlists against hard constraints —
+An agentic music librarian over a personal music library. It answers natural-language
+questions about the tracks you have saved, and builds playlists against hard constraints —
 with a deterministic validator, a repair loop, and an eval suite that reports pass *rates*
 rather than pass/fail.
 
+**[Try the live demo](https://huggingface.co/spaces/davidkoen/deadwax)** — it runs on a fixed 100-track library, the same data the eval
+suite grades.
+
 Built as a portfolio piece demonstrating production LLM engineering practice: tool use,
-evaluation, tracing, retrieval, real data and an MCP server today, with the site and live
-demo still to come — see [build progress](#build-progress).
+evaluation, tracing, retrieval, real data, an MCP server and a deployed demo, with the site
+and writeup still to come — see [build progress](#build-progress).
 
 ## The interesting part
 
@@ -59,7 +62,7 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 | Tracing | Langfuse |
 | Interop | Model Context Protocol server |
 | Site | Astro on Cloudflare Pages, static — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
-| Live demo | Gradio on a Hugging Face Space, free CPU tier |
+| Live demo | Gradio on a [Hugging Face Space](https://huggingface.co/spaces/davidkoen/deadwax), free CPU tier, deployed by CI |
 
 Stages 0 through 2 use the standard library only — no framework, no SDK, no dependencies.
 The raw HTTP call is written by hand before any abstraction is introduced, so that when a
@@ -67,8 +70,8 @@ framework misrepresents what it is doing, the difference is visible.
 
 ## Build progress
 
-Twelve stages, four phases. One branch and one squash-merged PR per stage, so the history
-reads as the build actually happened.
+Twelve stages, four phases. Each stage lands as one or more squash-merged pull requests, so
+the history reads as the build actually happened.
 
 | Phase | Stage | Status |
 | --- | --- | --- |
@@ -84,18 +87,28 @@ reads as the build actually happened.
 | C · Making it good | 9 · Retrieval | ✅ `v0.9` |
 | D · Ship | 10 · Real data | ✅ |
 | D · Ship | 11 · MCP server | ✅ |
-| D · Ship | 12 · Site and writeup | ⬜ `v1.0` |
+| D · Ship | 12a · Live demo | ✅ |
+| D · Ship | 12b · Site and writeup | ⬜ `v1.0` |
 
 ## Running it
 
-You need [uv](https://docs.astral.sh/uv/). It installs and manages Python itself, so it is
-the only prerequisite.
+You need [git](https://git-scm.com/downloads) and [uv](https://docs.astral.sh/uv/). uv
+installs and manages Python itself, so nothing else is required. On Windows:
 
 ```bash
 winget install --id=astral-sh.uv -e
 ```
 
-Then, from the repository root:
+Elsewhere, follow uv's [installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+Then:
+
+```bash
+git clone https://github.com/TheDavidKoen/deadwax
+```
+
+```bash
+cd deadwax
+```
 
 ```bash
 uv sync
@@ -104,7 +117,8 @@ uv sync
 That creates a virtual environment, installs the pinned Python version from
 `.python-version`, and installs the project.
 
-Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey):
+Add a free Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey). Copy
+the template — `copy` on Windows, `cp` elsewhere:
 
 ```bash
 copy .env.example .env
@@ -116,9 +130,9 @@ Paste the key after `GEMINI_API_KEY=`, then ask it something:
 uv run deadwax "build me a 30 minute playlist of ambient tracks, nothing over 8 minutes"
 ```
 
-Tool calls and the model that served the request are printed to stderr, so the answer alone
-pipes cleanly. `--model` pins a single model instead of falling back through the free-tier
-list.
+The model that answered, the library it read, every tool call and, with tracing on, a link
+to the trace are printed to stderr, so the answer alone pipes cleanly. `--model` pins a single
+model instead of falling back through the free-tier list.
 
 Free-tier limits are per model and differ by an order of magnitude between them. Your
 account's actual numbers are at
@@ -172,34 +186,30 @@ rather than copied, and the system prompt is sent as the server's instructions. 
 travel — the repair-loop supervisor, the step limit, the citation check — is in
 [ADR 0011](docs/adr/0011-over-mcp-the-client-is-the-agent.md).
 
-Asked from Claude Code against the author's real library, on 2026-10-28:
+### In the browser
 
-```
-> using deadwax please tell me how many tame impala songs i have
+`demo/` is the Gradio app behind the
+[live demo](https://huggingface.co/spaces/davidkoen/deadwax). Its dependencies are in a
+separate `demo` group, so the package itself never installs Gradio. To run it locally:
 
-  [deadwax · query_library]
-
-You have 7 Tame Impala tracks, 30:03 in total.
-
-Track                                          Year   Length
-Yes I'm Changing                               2015   4:30
-The Less I Know The Better                     2015   3:36
-Posthumous Forgiveness                         2020   6:06
-Lost In Yesterday                              2020   4:09
-New Gold (with Gorillaz and Bootie Brown)      2023   3:35
-One Night/All Night (with Justice)             2024   4:36
-Dracula (with JENNIE)                          2026   3:29
-
-Three of these are collaborations. Your library credits Tame Impala on them as a
-co-artist, so the artist filter counts them. [...] Both numbers came straight from
-query_library (total_matching and total_duration_display). I didn't add anything up
-myself.
+```bash
+uv run --group demo demo/app.py
 ```
 
-Every number is right, and the client quoted the computed total rather than adding seven
-lengths — a different model, in a different loop, following the tool description. It also
-rewrote two titles: the library has *New Gold (feat. Tame Impala and Bootie Brown)* and *One
-Night/All Night*. The facts came from the tools; the prose belongs to the client.
+It always answers from the fixtures and always uses `gemini-3.5-flash-lite`, whatever `.env`
+says, so the demo runs the model and data the scorecard measures. Beside each answer it shows
+the tool calls behind it, and a library table filtered to the tracks the answer rests on. That
+table is recomputed in Python from the tool calls, not taken from the model's reply. A daily
+question cap, `DEADWAX_DEMO_DAILY_QUESTIONS`, keeps a public demo inside the free tier.
+
+The demo remembers the last three exchanges, so a visitor can answer the agent's follow-up
+questions. Only the question and answer text is carried forward, never earlier tool calls, so
+every turn fetches its numbers afresh and the repair-loop supervisor never sees a previous
+turn's playlist. The eval cases are all single questions, so follow-ups are not measured.
+
+CI deploys `demo/` to the Space after the tests pass on `main`. The Space installs Deadwax from
+that exact commit, with every other package pinned to the versions in `uv.lock`, and
+`tests/demo/test_space_card.py` fails if the Space's Gradio or Python version drifts from them.
 
 ## Measuring variance
 
@@ -231,13 +241,14 @@ LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
 **Tracing is optional and the project runs without it.** With no keys set, `tracing.traced`
-yields an empty callback list and nothing else in the codebase branches on it. CI has no
+yields an empty callback list and everything else runs unchanged. CI has no
 secrets, and anyone cloning this repository can run the agent with a Gemini key alone.
 Observability that breaks the thing it observes when switched off is not observability.
 
-There are exactly two places a model is invoked — the agent stream, and the tool-free closing
+A chat model is invoked in exactly two places — the agent stream, and the tool-free closing
 turn that writes the final answer — and the handler reaches both. Covering only the first
 would leave every sentence a user actually reads untraced while the rule appeared satisfied.
+The embedding calls behind retrieval are traced too, each as an embedding span.
 
 The eval runner names each trace after its case and attaches the four scores to it, so a red
 cell in the scorecard is a filter in the Langfuse UI rather than a hunt. Each recorded attempt
@@ -248,7 +259,7 @@ clickable.
 [trace] https://cloud.langfuse.com/project/<id>/traces/<id>
 ```
 
-The CLI prints that line to stderr on every run.
+The CLI prints that line to stderr on every run while tracing is on.
 
 ### A known false alarm
 
@@ -272,8 +283,8 @@ nothing without traces would have shown that.
 
 ## Retrieval corpus
 
-Background on every artist in the library — MusicBrainz facts and the English Wikipedia
-article — split into 627 chunks and embedded with `gemini-embedding-001`. Search is cosine
+Background on every artist in the fixture library — MusicBrainz facts and the English
+Wikipedia article — split into 627 chunks and embedded with `gemini-embedding-001`. Search is cosine
 similarity in plain Python over a committed file, with
 [no vector database](docs/adr/0002-no-vector-database.md).
 
@@ -326,7 +337,7 @@ its eval case and gets a warning instead of a source line. See
 uv run evals/runner.py
 ```
 
-25 cases in `evals/cases/`, each run three times, scored on three dimensions separately.
+25 cases in `evals/cases/`, each run three times, scored on four dimensions separately.
 Cases are TOML read with `tomllib` — a read-only parser, so no code in this repository can
 write one at runtime.
 
@@ -404,8 +415,8 @@ each fix sits where it does.
   returns the tags the library uses, and the model decides whether the user's word is another
   name for one. No synonym table exists in code, because that judgement is about language.
 
-**`never-played-count`** was red for six weeks. It asks about play history, which no tool
-could filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
+**`never-played-count`** was the suite's longest-standing red case. It asks about play
+history, which no tool could filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
 to the same question, and the true count is 41. In the stage 9 sweep it refused all three
 times — *"my tools do not track play counts"* — after a prompt change about artist background
 that never mentions the library. In the stage 10 sweep it refused twice, and once fetched all
@@ -459,7 +470,7 @@ That is the clearest picture of variance this suite has produced. The aggregate 
 while individual cases move, which is why no single case's change between two sweeps counts
 as evidence on its own. One attempt in 75 was lost to a provider `503` and is excluded.
 
-Case keys have been corrected three times, each for grading wording rather than fact, and
+Case keys have been corrected four times, each for grading wording rather than fact, and
 each recorded in `evals/cases/README.md`. Every correction was applied to the "before" sweep
 as well as the "after", so the comparison holds.
 

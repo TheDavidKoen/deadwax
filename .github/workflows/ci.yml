@@ -41,3 +41,35 @@ jobs:
 
       - name: Validate eval cases
         run: uv run evals/runner.py --fixtures-only
+
+  deploy-demo:
+    name: Deploy the demo
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      SPACE: davidkoen/deadwax
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: "3.13"
+          enable-cache: true
+
+      - name: Assemble the Space
+        run: |
+          mkdir space
+          cp -r demo/. space/
+          uv export --frozen --group demo --no-dev --no-hashes --no-emit-project > space/requirements.txt
+          echo "deadwax @ git+https://github.com/${GITHUB_REPOSITORY}@${GITHUB_SHA}" >> space/requirements.txt
+
+      - name: Upload to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: >-
+          uvx --from huggingface_hub==2.3.0 hf upload "$SPACE" space .
+          --repo-type=space --token "$HF_TOKEN"
+          --commit-message "Deploy ${GITHUB_SHA::7} from GitHub"

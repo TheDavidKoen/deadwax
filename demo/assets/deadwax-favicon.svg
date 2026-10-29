@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" role="img" aria-label="Deadwax">
+  <rect width="220" height="220" rx="44" fill="#1b1a18"/>
+  <circle cx="110" cy="110" r="82" fill="none" stroke="#e8e4dd" stroke-width="16"/>
+  <path d="M 28 110 L 82 110" stroke="#e8e4dd" stroke-width="16"/>
+  <path d="M 82 110 L 100 110" stroke="#e1ad66" stroke-width="28"/>
+  <circle cx="122" cy="110" r="9" fill="#e8e4dd"/>
+</svg>

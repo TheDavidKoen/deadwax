@@ -24,8 +24,8 @@ Burial — and `fetch` refuses to run until a person has checked those matches a
 Every step skips work it has already done and caches every HTTP response and embedding under
 `.cache/`, so a rerun is free and an interrupted one resumes where it stopped.
 
-`index` sends one embedding request per chunk. The free tier allows 100 a minute, so the build
-is paced and takes about seven minutes from cold.
+`index` embeds every chunk, in batches of 50. The free tier limits embeddings per minute, so
+the build is paced at 90 texts a minute and takes about seven minutes from cold.
 
 `tests/retrieval/test_committed_index.py` fails if `index.jsonl` is out of date with
 `documents.json`, or was built with a different embedding model from the one configured.
