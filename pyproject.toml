@@ -48,5 +48,5 @@ known-third-party = ["mcp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["evals"]
+pythonpath = ["evals", "demo"]
 addopts = "-ra"

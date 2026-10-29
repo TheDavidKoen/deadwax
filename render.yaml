@@ -8,6 +8,16 @@ services:
     buildCommand: pip install uv==0.12.6 && uv sync --frozen --group demo --no-dev
     startCommand: .venv/bin/python demo/app.py
     healthCheckPath: /
+    buildFilter:
+      paths:
+        - src/**
+        - demo/**
+        - pyproject.toml
+        - uv.lock
+        - .python-version
+        - render.yaml
+      ignoredPaths:
+        - demo/wake/**
     envVars:
       - key: UV_PYTHON_DOWNLOADS
         value: never
@@ -33,3 +43,7 @@ services:
     autoDeployTrigger: checksPass
     buildCommand: echo "a single static page, nothing to build"
     staticPublishPath: ./demo/wake
+    buildFilter:
+      paths:
+        - demo/wake/**
+        - render.yaml
