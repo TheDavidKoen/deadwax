@@ -245,6 +245,35 @@ def test_a_track_with_no_energy_estimate_says_so(monkeypatch):
     assert track["energy_provenance"] == tools.NO_ENERGY_ESTIMATE
 
 
+def test_never_played_tracks_are_counted_here_not_by_the_model():
+    never = sum(t.last_played_at is None for t in TRACKS)
+    assert search(played=False, limit=0)["total_matching"] == never
+    assert search(played=True, limit=0)["total_matching"] == len(TRACKS) - never
+
+
+def test_the_played_filter_combines_with_the_others():
+    result = search(genre="jazz", played=False, limit=len(TRACKS))
+    assert all(t["last_played_at"] is None for t in result["tracks"])
+    assert all("jazz" in t["genres"] for t in result["tracks"])
+
+
+def test_complete_play_history_carries_no_warning(monkeypatch):
+    monkeypatch.setenv(library.LIBRARY_VARIABLE, library.FIXTURES)
+    assert "play_history" not in search(played=False)
+
+
+def test_partial_play_history_is_disclosed(monkeypatch):
+    monkeypatch.setenv(library.LIBRARY_VARIABLE, "data/library.sqlite")
+    monkeypatch.setattr(library, "tracks", lambda: TRACKS)
+    assert search(played=False)["play_history"] == library.PARTIAL_PLAY_HISTORY
+
+
+def test_play_history_is_not_mentioned_unless_asked_about(monkeypatch):
+    monkeypatch.setenv(library.LIBRARY_VARIABLE, "data/library.sqlite")
+    monkeypatch.setattr(library, "tracks", lambda: TRACKS)
+    assert "play_history" not in search(genre="jazz")
+
+
 @pytest.mark.parametrize("order_by", ["highest_energy", "lowest_energy"])
 def test_tracks_with_no_energy_estimate_sort_last(monkeypatch, order_by):
     unknown = replace(TRACKS[0], id="unknown", energy=None)

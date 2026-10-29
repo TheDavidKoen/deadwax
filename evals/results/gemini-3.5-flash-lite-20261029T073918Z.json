@@ -1,0 +1,201 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:40:23.754593+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 1.0,
+      "parameters": 1.0,
+      "answer": 0.667,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "high-energy-under-five-minutes",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 1.0,
+        "parameters": 1.0,
+        "answer": 0.667,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "high-energy-under-five-minutes",
+      "query": "build me a playlist of high energy tracks, nothing over 5 minutes",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/9ca9b33d1832949928f42a5bbf7ac93b",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "min_total_duration_ms": null,
+                "max_tracks_per_artist": null,
+                "released_after": null,
+                "max_track_duration_ms": 300000,
+                "required_genres": null,
+                "released_before": null
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "order_by": "highest_energy",
+                "limit": 50
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "target_energy": 0.85,
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022",
+                  "t031",
+                  "t066",
+                  "t070",
+                  "t065",
+                  "t023",
+                  "t013",
+                  "t088"
+                ],
+                "max_track_duration_ms": 300000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist, featuring tracks under 5 minutes:\n\n1. **Return of the Rat** by Wipers (2:47)\n2. **Only Shallow** by My Bloody Valentine (4:17)\n3. **King Kunta** by Kendrick Lamar (3:54)\n4. **French Disko** by Stereolab (3:12)\n5. **Three Girl Rhumba** by Wire (1:23)\n6. **Game of Pricks** by Guided by Voices (2:29)\n7. **Hounds of Love** by Kate Bush (3:03)\n8. **Be My Baby** by The Ronettes (2:41)\n9. **Workinonit** by J Dilla (2:57)\n10. **Vitamin C** by Can (3:34)\n11. **All Caps** by Madvillain (2:08)\n12. **History Lesson - Part II** by Minutemen (2:11)\n13. **Accordion** by Madvillain (1:58)\n14. **Don't Cry** by J Dilla (2:36)\n15. **Sound and Vision** by David Bowie (3:03)\n16. **Electric Relaxation** by A Tribe Called Quest (4:06)\n\n**Track Count:** 16  \n**Total Duration:** 46:19\n\nThe playlist matched the target energy closely with a score of 0.8825. This score rests on estimated values, with energy provenance: hand-authored fixture estimate.",
+          "total_tokens": 16144
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/28d88e721d68281ef5da6182aeb7831a",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "released_after": null,
+                "required_genres": null,
+                "released_before": null,
+                "max_tracks_per_artist": null,
+                "min_total_duration_ms": null,
+                "max_track_duration_ms": 300000
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "order_by": "highest_energy",
+                "limit": 50
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022",
+                  "t031",
+                  "t066",
+                  "t070",
+                  "t065",
+                  "t023",
+                  "t013"
+                ],
+                "max_track_duration_ms": 300000,
+                "target_energy": 0.85
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist, featuring tracks strictly under 5 minutes:\n\n1. **Wipers** \u2013 Return of the Rat (2:47)\n2. **My Bloody Valentine** \u2013 Only Shallow (4:17)\n3. **Kendrick Lamar** \u2013 King Kunta (3:54)\n4. **Stereolab** \u2013 French Disko (3:12)\n5. **Wire** \u2013 Three Girl Rhumba (1:23)\n6. **Guided by Voices** \u2013 Game of Pricks (2:29)\n7. **Kate Bush** \u2013 Hounds of Love (3:03)\n8. **The Ronettes** \u2013 Be My Baby (2:41)\n9. **J Dilla** \u2013 Workinonit (2:57)\n10. **Can** \u2013 Vitamin C (3:34)\n11. **Madvillain** \u2013 All Caps (2:08)\n12. **Minutemen** \u2013 History Lesson - Part II (2:11)\n13. **Madvillain** \u2013 Accordion (1:58)\n14. **J Dilla** \u2013 Don't Cry (2:36)\n15. **David Bowie** \u2013 Sound and Vision (3:03)\n\n**Playlist Stats:**\n* Track count: 15\n* Total duration: 42:13\n\nThe playlist matched the energy target with a score of 0.89. This score rests on estimated values, using the hand-authored fixture estimate provenance.",
+          "total_tokens": 16114
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/5f115090251b0c7f1d54300f8adb275f",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "released_after": null,
+                "min_total_duration_ms": null,
+                "required_genres": null,
+                "released_before": null,
+                "max_tracks_per_artist": null,
+                "max_track_duration_ms": 300000
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "limit": 50,
+                "order_by": "highest_energy"
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "max_track_duration_ms": 300000,
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022",
+                  "t031",
+                  "t066",
+                  "t070"
+                ]
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist:\n\n1. **Return of the Rat** by Wipers (2:47)\n2. **Only Shallow** by My Bloody Valentine (4:17)\n3. **King Kunta** by Kendrick Lamar (3:54)\n4. **French Disko** by Stereolab (3:12)\n5. **Three Girl Rhumba** by Wire (1:23)\n6. **Game of Pricks** by Guided by Voices (2:29)\n7. **Hounds of Love** by Kate Bush (3:03)\n8. **Be My Baby** by The Ronettes (2:41)\n9. **Workinonit** by J Dilla (2:57)\n10. **Vitamin C** by Can (3:34)\n11. **All Caps** by Madvillain (2:08)\n12. **History Lesson - Part II** by Minutemen (2:11)\n\n* track_count: 12\n* total_duration_display: 34:36",
+          "total_tokens": 15929
+        }
+      ]
+    }
+  ]
+}

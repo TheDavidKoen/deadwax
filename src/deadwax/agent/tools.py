@@ -69,6 +69,7 @@ def query_library(
     max_duration_ms: int | None = None,
     released_before: int | None = None,
     released_after: int | None = None,
+    played: bool | None = None,
     order_by: str | None = None,
     limit: int = 20,
 ) -> dict:
@@ -109,6 +110,7 @@ def query_library(
         and (max_duration_ms is None or t.duration_ms <= max_duration_ms)
         and (released_before is None or t.release_year < released_before)
         and (released_after is None or t.release_year > released_after)
+        and (played is None or (t.last_played_at is not None) == played)
     ]
     if order_by is not None:
         matches = sorted(matches, key=ORDERINGS[order_by])
@@ -122,6 +124,8 @@ def query_library(
     }
     if genre is not None and not matches:
         result["known_genres"] = sorted({g for t in library.tracks() for g in t.genres})
+    if played is not None and (history := library.play_history()):
+        result["play_history"] = history
     return result
 
 

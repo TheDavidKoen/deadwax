@@ -1,0 +1,231 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:30:51.661931+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 1.0,
+      "parameters": 1.0,
+      "answer": 0.333,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "high-energy-under-five-minutes",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 1.0,
+        "parameters": 1.0,
+        "answer": 0.333,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "high-energy-under-five-minutes",
+      "query": "build me a playlist of high energy tracks, nothing over 5 minutes",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/a209779376a2e646168d266e367e39bd",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "released_after": null,
+                "max_tracks_per_artist": null,
+                "max_track_duration_ms": 300000,
+                "required_genres": null,
+                "released_before": null,
+                "min_total_duration_ms": null
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "max_duration_ms": 300000,
+                "order_by": "highest_energy"
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "target_energy": 0.8,
+                "max_track_duration_ms": 300000,
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t052",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022"
+                ]
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist, featuring tracks all under 5 minutes:\n\n1. **Return of the Rat** by Wipers (2:47)\n2. **Only Shallow** by My Bloody Valentine (4:17)\n3. **King Kunta** by Kendrick Lamar (3:54)\n4. **French Disko** by Stereolab (3:12)\n5. **Three Girl Rhumba** by Wire (1:23)\n6. **Machine Gun** by Portishead (4:43)\n7. **Game of Pricks** by Guided by Voices (2:29)\n8. **Hounds of Love** by Kate Bush (3:03)\n9. **Be My Baby** by The Ronettes (2:41)\n10. **Workinonit** by J Dilla (2:57)\n\nPlaylist details:\n- track_count: 10\n- total_duration_display: 31:26\n\nThe playlist closely matched the energy target with an energy score of 0.985. This score rests on estimated values, using the hand-authored fixture estimate provenance.",
+          "total_tokens": 10300
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/5261ea037a7b4839bda38bddd4bde63d",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "limit": 50,
+                "order_by": "highest_energy"
+              }
+            },
+            {
+              "name": "check_feasibility",
+              "args": {
+                "required_genres": null,
+                "min_total_duration_ms": 1800000,
+                "max_track_duration_ms": 300000
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "max_duration_ms": 300000,
+                "order_by": "highest_energy"
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "max_track_duration_ms": 300000,
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t052",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022"
+                ],
+                "min_total_duration_ms": 1800000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist, featuring tracks strictly under 5 minutes:\n\n1. **Wipers** \u2013 \"Return of the Rat\" (2:47)\n2. **My Bloody Valentine** \u2013 \"Only Shallow\" (4:17)\n3. **Kendrick Lamar** \u2013 \"King Kunta\" (3:54)\n4. **Stereolab** \u2013 \"French Disko\" (3:12)\n5. **Wire** \u2013 \"Three Girl Rhumba\" (1:23)\n6. **Portishead** \u2013 \"Machine Gun\" (4:43)\n7. **Guided by Voices** \u2013 \"Game of Pricks\" (2:29)\n8. **Kate Bush** \u2013 \"Hounds of Love\" (3:03)\n9. **The Ronettes** \u2013 \"Be My Baby\" (2:41)\n10. **J Dilla** \u2013 \"Workinonit\" (2:57)\n\n**Playlist details:**\n* Track count: 10\n* Total duration: 31:26",
+          "total_tokens": 31299
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/5e66fc54cf18a534863a2d2926abad04",
+          "stop": "validated",
+          "tool": true,
+          "parameters": true,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "released_before": null,
+                "max_track_duration_ms": 300000,
+                "required_genres": null,
+                "released_after": null,
+                "min_total_duration_ms": null,
+                "max_tracks_per_artist": null
+              }
+            },
+            {
+              "name": "query_library",
+              "args": {
+                "limit": 50,
+                "max_duration_ms": 300000,
+                "order_by": "highest_energy"
+              }
+            },
+            {
+              "name": "validate_playlist",
+              "args": {
+                "track_ids": [
+                  "t073",
+                  "t094",
+                  "t089",
+                  "t091",
+                  "t069",
+                  "t052",
+                  "t071",
+                  "t043",
+                  "t072",
+                  "t022",
+                  "t031",
+                  "t066",
+                  "t070",
+                  "t017",
+                  "t090",
+                  "t065",
+                  "t023",
+                  "t013",
+                  "t088",
+                  "t087",
+                  "t024",
+                  "t092",
+                  "t062",
+                  "t025",
+                  "t055",
+                  "t035",
+                  "t020",
+                  "t093",
+                  "t085",
+                  "t018",
+                  "t086",
+                  "t100",
+                  "t097",
+                  "t036",
+                  "t001",
+                  "t098",
+                  "t033",
+                  "t096",
+                  "t040",
+                  "t047",
+                  "t074",
+                  "t049",
+                  "t021",
+                  "t084",
+                  "t039",
+                  "t095",
+                  "t038",
+                  "t058"
+                ],
+                "max_track_duration_ms": 300000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "Here is your high-energy playlist, featuring tracks strictly under five minutes:\n\n1. **Return of the Rat** by Wipers (2:47)\n2. **Only Shallow** by My Bloody Valentine (4:17)\n3. **King Kunta** by Kendrick Lamar (3:54)\n4. **French Disko** by Stereolab (3:12)\n5. **Three Girl Rhumba** by Wire (1:23)\n6. **Machine Gun** by Portishead (4:43)\n7. **Game of Pricks** by Guided by Voices (2:29)\n8. **Hounds of Love** by Kate Bush (3:03)\n9. **Be My Baby** by The Ronettes (2:41)\n10. **Workinonit** by J Dilla (2:57)\n11. **Vitamin C** by Can (3:34)\n12. **All Caps** by Madvillain (2:08)\n13. **History Lesson - Part II** by Minutemen (2:11)\n14. **Life's What You Make It** by Talk Talk (4:28)\n15. **Doomsday** by MF DOOM (4:56)\n16. **Accordion** by Madvillain (1:58)\n17. **Don't Cry** by J Dilla (2:36)\n18. **Sound and Vision** by David Bowie (3:03)\n19. **Electric Relaxation** by A Tribe Called Quest (4:06)\n20. **Devil's Pie** by D'Angelo (4:26)\n21. **Time: The Donut of the Heart** by J Dilla (1:37)\n22. **Come On Let's Go** by Broadcast (3:16)\n23. **Electric Counterpoint: Fast** by Steve Reich (4:29)\n24. **Two Can Win** by J Dilla (1:41)\n25. **Alison** by Slowdive (3:49)\n26. **Archangel** by Burial (3:59)\n27. **Dayvan Cowboy** by Boards of Canada (5:00)\n28. **Cherry-Coloured Funk** by Cocteau Twins (3:12)\n29. **What's Going On** by Marvin Gaye (3:53)\n30. **Roygbiv** by Boards of Canada (2:31)\n31. **Didn't Cha Know** by Erykah Badu (3:56)\n32. **Angel Echoes** by Four Tet (3:07)\n33. **King Tubby Meets Rockers Uptown** by King Tubby (3:36)\n34. **Untrue** by Burial (3:07)\n35. **Everything in Its Right Place** by Radiohead (4:11)\n36. **East of the River Nile** by Augustus Pablo (4:12)\n37. **Xtal** by Aphex Twin (4:51)\n38. **This Is How We Walk on the Moon** by Arthur Russell (3:42)\n39. **Northern Sky** by Nick Drake (3:47)\n40. **A Case of You** by Joni Mitchell (4:21)\n41. **Final Day** by Young Marble Giants (1:41)\n42. **Both Sides Now** by Joni Mitchell (4:33)\n43. **Olson** by Boards of Canada (1:31)\n44. **Ne Me Quitte Pas** by Nina Simone (3:33)\n45. **River Man** by Nick Drake (4:21)\n46. **Fourth of July** by Sufjan Stevens (4:38)\n47. **Pink Moon** by Nick Drake (2:06)\n48. **Heavy Water/I'd Rather Be Sleeping** by Grouper (3:31)\n\nTrack count: 48  \nTotal duration: 2:43:03",
+          "total_tokens": 16849
+        }
+      ]
+    }
+  ]
+}

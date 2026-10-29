@@ -40,6 +40,13 @@ is the specific bias the original hand-written rule existed to avoid.
 | `playlist-jazz-impossible`, `contradictory-duration`, `hip-hop-playlist-artist-cap`, `reggae-playlist-impossible` | added `" ms"`, `"millisecond"` and `"_ms"` to `must_not_contain` | an assistant, approved by the author |
 | `radiohead-jazz-tracks` | replaced a ban on the four Radiohead track names with `genre = "jazz"` in parameters and a set of negations in `must_contain_any` | an assistant, correcting its own stage 7 key |
 | `contradictory-duration` | added `"not possible"` to `must_contain_any` | an assistant, approved by the author |
+| `contradictory-duration` | replaced `"here are"` in `must_not_contain` with `"here are your"` and `"here are the"` | an assistant, approved by the author |
+
+The `"here are"` ban was meant to catch a list of tracks being offered. Substring matching
+also found it inside *"There are no tracks"*, which is a correct refusal. The narrower phrases
+still catch the offer. `"0 tracks"` was deliberately not added to the accepted phrases,
+although it means the same as `"no tracks"`. Loosening a key straight after reading the
+answers it would pass is the move that makes a pass rate untrustworthy.
 
 The `radiohead-jazz-tracks` key banned the band's track names to catch them being presented
 as jazz. Once the agent began explaining *what the tracks actually are* — *"four Radiohead

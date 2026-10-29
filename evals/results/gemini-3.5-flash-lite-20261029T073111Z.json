@@ -1,0 +1,100 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:31:44.228205+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 1.0,
+      "parameters": 1.0,
+      "answer": 1.0,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "contradictory-duration",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 1.0,
+        "parameters": 1.0,
+        "answer": 1.0,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "contradictory-duration",
+      "query": "give me tracks under 2 minutes that are at least 10 minutes long",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/e9aa441537f839879f1717c82cb297db",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "min_total_duration_ms": 600000,
+                "max_track_duration_ms": 120000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "It is not possible to satisfy this request because the total duration constraint fails. \n\nYou asked for a collection of tracks that are each under 2 minutes long, but where the overall runtime adds up to at least 10 minutes. The most this library can provide for that total duration is 9:51.",
+          "total_tokens": 2115
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/bb1c0308cdb30b35fc812ce13e3242a3",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "min_total_duration_ms": 600000,
+                "max_track_duration_ms": 120000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "This cannot be fulfilled. You asked for individual songs that are under two minutes long while having a total duration of at least ten minutes, which is a logical contradiction because a single track cannot simultaneously be shorter than two minutes and last ten minutes or longer.",
+          "total_tokens": 2100
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/6bdd1ba27df55f48b0d5e236f4fb1077",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "min_total_duration_ms": 600000,
+                "max_track_duration_ms": 120000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "This is not possible. The constraint that fails is the total duration. You asked for tracks that are under two minutes long with a total duration of at least ten minutes, but the most this library can provide is 9:51.",
+          "total_tokens": 2098
+        }
+      ]
+    }
+  ],
+  "rescored_at": "2026-10-29T08:08:27.544710+00:00"
+}
