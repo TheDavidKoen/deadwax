@@ -9,10 +9,18 @@ from deadwax.data.store import connect, read_tracks
 FIXTURES = "fixtures"
 LIBRARY_VARIABLE = "DEADWAX_LIBRARY"
 DEFAULT_DATABASE = Path("data") / "library.sqlite"
+PARTIAL_PLAY_HISTORY = (
+    "only the user's last 50 plays are known, so a track counted as never played may "
+    "have been played before them"
+)
 
 
 def source() -> str:
     return os.environ.get(LIBRARY_VARIABLE) or FIXTURES
+
+
+def play_history() -> str | None:
+    return None if source() == FIXTURES else PARTIAL_PLAY_HISTORY
 
 
 @cache

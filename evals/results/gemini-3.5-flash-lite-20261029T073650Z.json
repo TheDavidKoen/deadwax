@@ -1,0 +1,98 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:37:23.008144+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 0.0,
+      "parameters": 0.0,
+      "answer": 0.0,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "high-energy-under-five-minutes",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 0.0,
+        "parameters": 0.0,
+        "answer": 0.0,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "high-energy-under-five-minutes",
+      "query": "build me a playlist of high energy tracks, nothing over 5 minutes",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/6dc8b785efe7a93f3da1a87bd7777063",
+          "stop": null,
+          "tool": false,
+          "parameters": false,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "order_by": "highest_energy"
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "To build a playlist for you, could you please let me know how long you would like it to be (for example, roughly 30 minutes)?",
+          "total_tokens": 5664
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/49a0ac3b37acaee70051e7cff636d4e3",
+          "stop": null,
+          "tool": false,
+          "parameters": false,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "order_by": "highest_energy",
+                "limit": 10
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "To build a playlist for you, could you please let me know how many tracks or roughly how long you would like it to be?",
+          "total_tokens": 4695
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/b8fb94c478b0c66afce856ed15408147",
+          "stop": null,
+          "tool": false,
+          "parameters": false,
+          "answer": false,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "limit": 5,
+                "order_by": "highest_energy"
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "To build a playlist, I need a little more information about what you're looking for. Could you please let me know how long the playlist should be (for example, roughly 30 minutes or an hour), or if you have any other preferences such as specific genres or release years?",
+          "total_tokens": 4266
+        }
+      ]
+    }
+  ]
+}

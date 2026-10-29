@@ -1,0 +1,112 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:36:30.474455+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 1.0,
+      "parameters": 1.0,
+      "answer": 1.0,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "contradictory-duration",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 1.0,
+        "parameters": 1.0,
+        "answer": 1.0,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "contradictory-duration",
+      "query": "give me tracks under 2 minutes that are at least 10 minutes long",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/3c5487ca73f79bff18548552b71fd83a",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "required_genres": null,
+                "max_track_duration_ms": 120000,
+                "released_after": null,
+                "max_tracks_per_artist": null,
+                "released_before": null,
+                "min_total_duration_ms": 600000
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "It is not possible to fulfill this request because the total duration constraint fails. \n\nYou asked for a collection of tracks that are each under two minutes long, yet have a combined total duration of at least ten minutes. The most this library can provide for that total duration is 9:51.",
+          "total_tokens": 2187
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/f2b6658a6951ff20e1853343a7bf2adc",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "released_before": null,
+                "min_total_duration_ms": 600000,
+                "max_track_duration_ms": 120000,
+                "released_after": null,
+                "max_tracks_per_artist": null,
+                "required_genres": null
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "It is not possible to fulfill this request because the total duration constraint fails. \n\nYou asked for a collection of tracks that are each under two minutes long, yet have a combined total duration of at least ten minutes. The most this library can provide for that total duration is 9:51.",
+          "total_tokens": 2187
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/893b110ab080ac7888bcd3c5ce8f5bff",
+          "stop": "infeasible",
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "check_feasibility",
+              "args": {
+                "max_track_duration_ms": 120000,
+                "min_total_duration_ms": 600000,
+                "max_tracks_per_artist": null,
+                "released_after": null,
+                "released_before": null,
+                "required_genres": null
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "It is not possible to fulfill this request because of a limitation with the total duration constraint. \n\nYou asked for a collection of tracks that are each under two minutes long, but where the overall length adds up to at least ten minutes. The most this library can provide for that total is 9:51.",
+          "total_tokens": 2190
+        }
+      ]
+    }
+  ],
+  "rescored_at": "2026-10-29T08:08:32.799499+00:00"
+}

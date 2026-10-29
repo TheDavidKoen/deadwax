@@ -70,11 +70,15 @@ def run_pull(database: Path) -> None:
 
     tagged = Counter(genre for track in pulled.tracks for genre in track.genres)
     untagged = sum(1 for track in pulled.tracks if not track.genres)
+    dated = sum(1 for track in pulled.tracks if track.last_played_at is not None)
     print()
     print(f"{len(pulled.tracks)} tracks written to {database}")
     print(f"{unmatched} tracks have no MusicBrainz recording for their ISRC")
     print(f"{untagged} tracks have no genre")
-    print(f"{len(played)} tracks have a last-played date (Spotify only reports the last 50 plays)")
+    print(
+        f"{dated} tracks have a last-played date, from {len(played)} distinct tracks in "
+        f"the last 50 plays"
+    )
     print(f"most common genres: {', '.join(g for g, _ in tagged.most_common(12)) or 'none'}")
     if pulled.skipped:
         print(f"skipped {len(pulled.skipped)} local or undated tracks: {', '.join(pulled.skipped)}")

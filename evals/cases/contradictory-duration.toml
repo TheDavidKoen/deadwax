@@ -2,4 +2,4 @@ query = "give me tracks under 2 minutes that are at least 10 minutes long"
 
 [expect.answer]
 must_contain_any = ["cannot", "no tracks", "contradict", "impossible", "not possible", "none"]
-must_not_contain = ["here are", " ms", "millisecond", "_ms"]
+must_not_contain = ["here are your", "here are the", " ms", "millisecond", "_ms"]

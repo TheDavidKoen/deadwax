@@ -357,7 +357,10 @@ like-for-like comparison with the row above it.
 | — | | | | | |
 | stage 9 · retrieval | 25 | 100% | 99% | 95% | 100% |
 | the same sweep, older 23 cases only | 23 | 100% | 100% | 94% | 100% |
-| **stage 10 · real data, fixtures still graded** | **25** | **100%** | **99%** | **95%** | **100%** |
+| stage 10 · real data, fixtures still graded | 25 | 100% | 99% | 95% | 100% |
+| — | | | | | |
+| the never-played filter, with four sentences of description | 25 | 96% | 96% | 92% | 100% |
+| **the never-played filter, parameter only** | **25** | **100%** | **100%** | **97%** | **100%** |
 
 The stage 7 and stage 8 rows measure the same behaviour; only the sample differs. The stage 7
 sweep lost 4 of 69 attempts to provider `504`s, which are excluded from every rate, while the
@@ -401,15 +404,38 @@ each fix sits where it does.
   returns the tags the library uses, and the model decides whether the user's word is another
   name for one. No synonym table exists in code, because that judgement is about language.
 
-One case is still red. **`never-played-count`** asks about play history, which no tool can
-filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
+**`never-played-count`** was red for six weeks. It asks about play history, which no tool
+could filter on. Until stage 9 the agent made up an answer: the 17 September sweep gave 18, 1 and 23
 to the same question, and the true count is 41. In the stage 9 sweep it refused all three
 times — *"my tools do not track play counts"* — after a prompt change about artist background
 that never mentions the library. In the stage 10 sweep it refused twice, and once fetched all
 100 tracks and counted the empty `last_played_at` fields itself: *"You have 26 tracks … that
 you have never played."* That is rule 1 broken in the open, with a wrong answer to show for
-it. The refusals were never a fix. The fix is a filter on `query_library`, so that Python
-does the counting.
+it. The refusals were never a fix.
+
+The fix is a `played` filter on `query_library`, so Python does the counting. It now answers
+41, three times out of three. Getting there is the clearest demonstration in this repository
+of rule 2. The first version also added four sentences to the tool's description, explaining
+when to use the filter. The sweep fixed `never-played-count` and broke two playlist cases on
+every run. `high-energy-under-five-minutes` stopped building playlists and asked how long the
+playlist should be. `contradictory-duration` was answered as a track search. A control run of
+those two cases on the unchanged code passed 6 of 6, so the change was the cause, not the
+model drifting overnight. Cutting the text to two sentences fixed one of them. Cutting it to
+none fixed both, and the parameter's name alone was enough for the model to use it. Text added
+to one tool's description changed how the agent handled requests that never touch that tool.
+
+The parameter alone still moved one routing decision. On the unchanged code,
+`contradictory-duration` went to `check_feasibility` 9 times out of 9, and with the new
+parameter it goes to `query_library` 3 times out of 3. All three answers say truthfully that no
+track is both under 2 minutes and at least 10. One was graded wrong by a bug in its own key —
+`"here are"` matched inside *"There are no tracks"* — corrected and rescored for both sweeps,
+as recorded in `evals/cases/README.md`. One more says *"0 tracks"*, which the key does not
+accept. It stays a miss rather than loosening the key after reading the answer.
+
+On the author's real library, where Spotify supplies only the last 50 plays, the tool adds a
+`play_history` note saying so. Asked the same question, the agent answered *"287 tracks …
+though note that only your last 50 plays are tracked."* No eval case measures that, because
+the fixtures have a complete history and never produce the note.
 
 Stage 9 added the two retrieval cases, and both answered correctly every time. The one
 parameter miss is `jonny-greenwood-film-scores`, where one run out of three stopped at "Jonny

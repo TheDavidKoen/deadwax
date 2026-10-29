@@ -1,0 +1,96 @@
+{
+  "model": "gemini-3.5-flash-lite",
+  "repeats": 3,
+  "recorded_at": "2026-10-29T07:35:00.327961+00:00",
+  "scorecard": {
+    "cases": 1,
+    "overall": {
+      "tool": 1.0,
+      "parameters": 1.0,
+      "answer": 1.0,
+      "converged": 1.0
+    },
+    "per_case": [
+      {
+        "case": "never-played-count",
+        "attempts": 3,
+        "errors": 0,
+        "tool": 1.0,
+        "parameters": 1.0,
+        "answer": 1.0,
+        "converged": 1.0
+      }
+    ]
+  },
+  "results": [
+    {
+      "case": "never-played-count",
+      "query": "how many tracks have I never played?",
+      "attempts": [
+        {
+          "attempt": 1,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/3dce14e22c747dd85597d9a992fe5613",
+          "stop": null,
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "played": false
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "You have 41 tracks that you have never played.",
+          "total_tokens": 5414
+        },
+        {
+          "attempt": 2,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/190f48d86522d2b07c11d6a9e9fc585e",
+          "stop": null,
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "played": false
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "You have 41 tracks that you have never played.",
+          "total_tokens": 5414
+        },
+        {
+          "attempt": 3,
+          "error": null,
+          "converged": true,
+          "trace_url": "https://cloud.langfuse.com/project/cmtwneso000f5ad0i6gpfmhtz/traces/48d685507cabe92029871615a95abefd",
+          "stop": null,
+          "tool": true,
+          "parameters": true,
+          "answer": true,
+          "tool_calls": [
+            {
+              "name": "query_library",
+              "args": {
+                "played": false
+              }
+            }
+          ],
+          "retrieved": [],
+          "final_text": "You have 41 tracks that you have never played.",
+          "total_tokens": 5414
+        }
+      ]
+    }
+  ]
+}
