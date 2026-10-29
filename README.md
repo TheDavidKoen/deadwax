@@ -7,8 +7,9 @@ questions about the tracks you have saved, and builds playlists against hard con
 with a deterministic validator, a repair loop, and an eval suite that reports pass *rates*
 rather than pass/fail.
 
-**[Try the live demo](https://huggingface.co/spaces/davidkoen/deadwax)** — it runs on a fixed 100-track library, the same data the eval
-suite grades.
+**[Try the live demo](https://deadwax.onrender.com)** — it runs on a fixed 100-track library, the same data the
+eval suite grades. It is on a free server that sleeps when idle, so the first visit can take
+about a minute to wake it.
 
 Built as a portfolio piece demonstrating production LLM engineering practice: tool use,
 evaluation, tracing, retrieval, real data, an MCP server and a deployed demo, with the site
@@ -62,7 +63,7 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 | Tracing | Langfuse |
 | Interop | Model Context Protocol server |
 | Site | Astro on Cloudflare Pages, static — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
-| Live demo | Gradio on a [Hugging Face Space](https://huggingface.co/spaces/davidkoen/deadwax), free CPU tier, deployed by CI |
+| Live demo | Gradio on a free [Render](https://deadwax.onrender.com) web service — [why not Hugging Face](docs/adr/0012-the-live-demo-runs-on-render.md) |
 
 Stages 0 through 2 use the standard library only — no framework, no SDK, no dependencies.
 The raw HTTP call is written by hand before any abstraction is introduced, so that when a
@@ -188,8 +189,7 @@ travel — the repair-loop supervisor, the step limit, the citation check — is
 
 ### In the browser
 
-`demo/` is the Gradio app behind the
-[live demo](https://huggingface.co/spaces/davidkoen/deadwax). Its dependencies are in a
+`demo/` is the Gradio app behind the [live demo](https://deadwax.onrender.com). Its dependencies are in a
 separate `demo` group, so the package itself never installs Gradio. To run it locally:
 
 ```bash
@@ -207,9 +207,12 @@ questions. Only the question and answer text is carried forward, never earlier t
 every turn fetches its numbers afresh and the repair-loop supervisor never sees a previous
 turn's playlist. The eval cases are all single questions, so follow-ups are not measured.
 
-CI deploys `demo/` to the Space after the tests pass on `main`. The Space installs Deadwax from
-that exact commit, with every other package pinned to the versions in `uv.lock`, and
-`tests/demo/test_space_card.py` fails if the Space's Gradio or Python version drifts from them.
+`render.yaml` deploys it to Render once CI passes on `main`, installing exactly the versions
+in `uv.lock`. The free service sleeps after 15 idle minutes, and while it sleeps nothing of it
+is running to say so. So the public link is a static page, `demo/wake/`, which never sleeps:
+it explains the wait, checks every few seconds whether the demo is up, and goes there the
+moment it is. Why the demo moved from Hugging Face, and what the move costs, is in
+[ADR 0012](docs/adr/0012-the-live-demo-runs-on-render.md).
 
 ## Measuring variance
 
