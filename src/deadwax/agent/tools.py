@@ -4,12 +4,14 @@ from langchain_core.tools import tool
 
 from deadwax.agent.embeddings import embed_query
 from deadwax.data import Track, library
+from deadwax.data.filters import select
 from deadwax.data.resolve import normalise
 from deadwax.domain import Constraints, Violation, validator
 from deadwax.retrieval.index import Index, read_index
 from deadwax.retrieval.search import top_k
 
 PASSAGES_RETURNED = 4
+QUERY_LIMIT = 20
 MIN_DURATION_WINDOW_MS = 120_000
 DURATION_ADJUSTMENTS = ("DURATION_OVER", "DURATION_UNDER", "TRACK_TOO_LONG")
 
@@ -23,7 +25,7 @@ ORDERINGS = {
 }
 
 
-def _display(duration_ms: int) -> str:
+def display_duration(duration_ms: int) -> str:
     minutes, seconds = divmod(duration_ms // 1000, 60)
     hours, minutes = divmod(minutes, 60)
     return f"{hours}:{minutes:02d}:{seconds:02d}" if hours else f"{minutes}:{seconds:02d}"
@@ -37,7 +39,7 @@ def _violation(violation: Violation) -> dict:
         "adjust_by": violation.adjust_by,
     }
     if violation.adjust_by is not None and violation.code in DURATION_ADJUSTMENTS:
-        payload["adjust_by_display"] = _display(abs(violation.adjust_by))
+        payload["adjust_by_display"] = display_duration(abs(violation.adjust_by))
     return payload
 
 
@@ -47,7 +49,7 @@ def _as_dict(track: Track) -> dict:
         "name": track.name,
         "artists": list(track.artists),
         "duration_ms": track.duration_ms,
-        "duration_display": _display(track.duration_ms),
+        "duration_display": display_duration(track.duration_ms),
         "genres": list(track.genres),
         "release_year": track.release_year,
         "energy": track.energy.value if track.energy else None,
@@ -71,7 +73,7 @@ def query_library(
     released_after: int | None = None,
     played: bool | None = None,
     order_by: str | None = None,
-    limit: int = 20,
+    limit: int = QUERY_LIMIT,
 ) -> dict:
     """Search the user's music library and return matching tracks with their totals.
 
@@ -101,17 +103,16 @@ def query_library(
     if order_by is not None and order_by not in ORDERINGS:
         return {"invalid_order_by": order_by, "allowed": sorted(ORDERINGS)}
 
-    matches = [
-        t
-        for t in library.tracks()
-        if (genre is None or genre.lower() in [g.lower() for g in t.genres])
-        and (artist is None or artist.lower() in [a.lower() for a in t.artists])
-        and (min_duration_ms is None or t.duration_ms >= min_duration_ms)
-        and (max_duration_ms is None or t.duration_ms <= max_duration_ms)
-        and (released_before is None or t.release_year < released_before)
-        and (released_after is None or t.release_year > released_after)
-        and (played is None or (t.last_played_at is not None) == played)
-    ]
+    matches = select(
+        library.tracks(),
+        genre=genre,
+        artist=artist,
+        min_duration_ms=min_duration_ms,
+        max_duration_ms=max_duration_ms,
+        released_before=released_before,
+        released_after=released_after,
+        played=played,
+    )
     if order_by is not None:
         matches = sorted(matches, key=ORDERINGS[order_by])
 
@@ -119,7 +120,7 @@ def query_library(
     result = {
         "total_matching": len(matches),
         "total_duration_ms": total_ms,
-        "total_duration_display": _display(total_ms),
+        "total_duration_display": display_duration(total_ms),
         "tracks": [_as_dict(t) for t in matches[:limit]],
     }
     if genre is not None and not matches:
@@ -221,7 +222,7 @@ def validate_playlist(
     return {
         "ok": result.ok,
         "total_duration_ms": total_ms,
-        "total_duration_display": _display(total_ms),
+        "total_duration_display": display_duration(total_ms),
         "track_count": len(track_ids),
         "violations": [_violation(v) for v in result.violations],
         "soft_scores": [
@@ -288,7 +289,7 @@ def check_feasibility(
         "reason": outcome.reason.value if outcome.reason else None,
         "candidate_count": outcome.candidate_count,
         "max_achievable_ms": outcome.max_achievable_ms,
-        "max_achievable_display": _display(outcome.max_achievable_ms),
+        "max_achievable_display": display_duration(outcome.max_achievable_ms),
         "requested_min_ms": outcome.requested_min_ms,
     }
 

@@ -20,6 +20,9 @@ deadwax-spotify = "deadwax.spotify:main"
 deadwax-mcp = "deadwax.mcp.server:main"
 
 [dependency-groups]
+demo = [
+    "gradio>=6.31.0",
+]
 dev = [
     "pytest>=8.3",
     "ruff>=0.13",
@@ -45,4 +48,5 @@ known-third-party = ["mcp"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["evals"]
 addopts = "-ra"

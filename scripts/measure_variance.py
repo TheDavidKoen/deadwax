@@ -7,7 +7,7 @@ from collections import Counter
 from datetime import UTC, datetime
 from pathlib import Path
 
-from deadwax.agent import Answer, answer_text, ask
+from deadwax.agent import Answer, ask
 from deadwax.agent.models import EVAL_MODEL
 from deadwax.config import load_env_file, use_utf8_output
 from deadwax.data import library
@@ -73,7 +73,7 @@ def result_of(index: int, answer: Answer, elapsed_ms: int) -> dict:
         "requests": len(calls) + 1 + (1 if answer.stop else 0),
         "tool_calls": calls,
         "total_tokens": answer.total_tokens(),
-        "final_text": answer_text(answer.messages[-1]) if answer.messages else "",
+        "final_text": answer.final_text(),
     }
 
 

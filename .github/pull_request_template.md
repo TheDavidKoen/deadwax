@@ -17,10 +17,10 @@ Does this touch a prompt, a tool description, or a model?
 - [ ] No
 - [ ] Yes — eval scores before and after are recorded below and in the commit message
 
-| | Tool selection | Parameters | Answer |
-| --- | --- | --- | --- |
-| Before | | | |
-| After | | | |
+| | Tool selection | Parameters | Answer | Convergence |
+| --- | --- | --- | --- | --- |
+| Before | | | | |
+| After | | | | |
 
 ## Architecture rules
 

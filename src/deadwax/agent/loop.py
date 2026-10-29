@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
 
@@ -5,6 +6,7 @@ from langchain.agents import create_agent
 from langchain_google_genai.chat_models import GoogleRateLimitError
 
 from deadwax.agent import repair_loop, tracing, transcript
+from deadwax.agent.conversation import Exchange, opening_messages
 from deadwax.agent.models import build_model, model_order
 from deadwax.agent.tools import TOOLS
 
@@ -63,6 +65,12 @@ class Answer:
     def total_tokens(self) -> int:
         return transcript.total_tokens(self.messages)
 
+    def final_text(self) -> str:
+        return transcript.answer_text(self.messages[-1]) if self.messages else ""
+
+    def passages(self) -> dict[str, dict]:
+        return transcript.retrieved_passages(self.messages)
+
 
 def build_agent(model_name: str) -> Any:
     return create_agent(
@@ -77,17 +85,19 @@ def ask(
     model_name: str | None = None,
     max_steps: int = MAX_STEPS,
     trace_name: str = "ask",
+    history: Sequence[Exchange] = (),
 ) -> Answer:
     candidates = (model_name,) if model_name else model_order()
     exhausted: list[str] = []
+    metadata = {"question": question, "earlier_exchanges": len(history)}
 
     for name in candidates:
         messages: list[Any] = []
         verdict = repair_loop.Verdict()
-        with tracing.traced(trace_name, metadata={"model": name, "question": question}) as trace:
+        with tracing.traced(trace_name, metadata={"model": name, **metadata}) as trace:
             try:
                 for state in build_agent(name).stream(
-                    {"messages": [{"role": "user", "content": question}]},
+                    {"messages": opening_messages(question, history)},
                     config={"recursion_limit": max_steps, "callbacks": trace.callbacks},
                     stream_mode="values",
                 ):
