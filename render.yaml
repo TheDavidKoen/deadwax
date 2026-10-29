@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: deadwax-demo
+    runtime: python
+    plan: free
+    branch: main
+    autoDeployTrigger: checksPass
+    buildCommand: pip install uv==0.12.6 && uv sync --frozen --group demo --no-dev
+    startCommand: .venv/bin/python demo/app.py
+    healthCheckPath: /
+    envVars:
+      - key: UV_PYTHON_DOWNLOADS
+        value: never
+      - key: GRADIO_SERVER_NAME
+        value: 0.0.0.0
+      - key: GRADIO_SERVER_PORT
+        value: "10000"
+      - key: GRADIO_ANALYTICS_ENABLED
+        value: "False"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: LANGFUSE_PUBLIC_KEY
+        sync: false
+      - key: LANGFUSE_SECRET_KEY
+        sync: false
+      - key: LANGFUSE_BASE_URL
+        value: https://cloud.langfuse.com
+
+  - type: web
+    name: deadwax
+    runtime: static
+    branch: main
+    autoDeployTrigger: checksPass
+    buildCommand: echo "a single static page, nothing to build"
+    staticPublishPath: ./demo/wake
