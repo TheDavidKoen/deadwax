@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 
 import brand
+import dock
 import gradio as gr
 import guide
 
@@ -223,8 +224,8 @@ def main() -> None:
     cap = DailyCap(int(os.environ.get(DAILY_QUESTIONS_VARIABLE, DEFAULT_DAILY_QUESTIONS)))
     build_app(cap).launch(
         theme=brand.THEME,
-        css=guide.terminal_css() + brand.CSS,
-        head=brand.HEAD,
+        css=guide.terminal_css() + brand.CSS + dock.CSS,
+        head=brand.HEAD + dock.script(),
         favicon_path=str(brand.FAVICON),
         footer_links=["gradio"],
     )
