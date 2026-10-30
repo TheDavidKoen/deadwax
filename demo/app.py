@@ -164,7 +164,7 @@ def build_app(cap: DailyCap) -> gr.Blocks:
 
         gr.Markdown("## Behind the answer", elem_classes=["dw-section", "dw-behind-heading"])
         with (
-            gr.Accordion("Behind the answer", open=False, elem_classes="dw-behind"),
+            gr.Accordion("Behind the answer", open=True, elem_classes="dw-behind"),
             gr.Row(equal_height=False),
         ):
             with gr.Column(scale=1, min_width=280):

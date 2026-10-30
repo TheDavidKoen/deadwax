@@ -94,8 +94,11 @@ SCRIPT_TEMPLATE = """
 
   const ready = setInterval(() => {
     const answer = document.querySelector(".dw-answer");
-    if (!answer) return;
+    const behind = document.querySelector(".dw-behind .label-wrap");
+    if (!answer || !behind) return;
     clearInterval(ready);
+    if (PHONE.matches && behind.classList.contains("open")) behind.click();
+    document.documentElement.classList.add("dw-behind-ready");
     watchAnswers(answer, mountAlert());
   }, 200);
 })();
@@ -121,12 +124,12 @@ CSS = f"""
 
 @media (min-width: calc({PHONE_WIDTH} + 1px)) {{
   .dw-behind .label-wrap {{ display: none !important; }}
-  .dw-behind .label-wrap ~ div {{ display: block !important; }}
   .dw-behind {{ border: 0 !important; padding: 0 !important; background: none !important; }}
 }}
 
 @media (max-width: {PHONE_WIDTH}) {{
   .dw-behind-heading {{ display: none !important; }}
+  html:not(.dw-behind-ready) .dw-behind .label-wrap ~ * {{ visibility: hidden; max-height: 0; }}
   .dw-behind .label-wrap span {{
     font-family: "Cormorant Garamond", Georgia, serif; font-size: 20px; font-weight: 500;
   }}
