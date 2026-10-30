@@ -7,6 +7,7 @@ import brand
 import dock
 import gradio as gr
 import guide
+import mobile
 
 from deadwax.agent import Answer, ask, tracing
 from deadwax.agent.conversation import Exchange, remember
@@ -148,9 +149,10 @@ def build_app(cap: DailyCap) -> gr.Blocks:
                     max_lines=6,
                     max_length=MAX_QUESTION_CHARS,
                     placeholder="Ask about the library, or ask for a playlist",
+                    elem_id="dw-question",
                     elem_classes="dw-question",
                 )
-                ask_button = gr.Button("Ask", variant="primary")
+                ask_button = gr.Button("Ask", variant="primary", elem_id="dw-ask")
                 with gr.Column(elem_classes="dw-examples"):
                     gr.Examples(examples=EXAMPLES, inputs=question, label="Try one of these")
 
@@ -160,8 +162,11 @@ def build_app(cap: DailyCap) -> gr.Blocks:
                 reply = gr.Markdown(PLACEHOLDER, elem_classes="dw-answer")
                 new_conversation = gr.Button("New conversation", size="sm")
 
-        gr.Markdown("## Behind the answer", elem_classes="dw-section")
-        with gr.Row(equal_height=False):
+        gr.Markdown("## Behind the answer", elem_classes=["dw-section", "dw-behind-heading"])
+        with (
+            gr.Accordion("Behind the answer", open=False, elem_classes="dw-behind"),
+            gr.Row(equal_height=False),
+        ):
             with gr.Column(scale=1, min_width=280):
                 gr.Markdown("### How it got there")
                 trail = gr.Markdown(NO_TRAIL, elem_classes="dw-trail")
@@ -224,8 +229,8 @@ def main() -> None:
     cap = DailyCap(int(os.environ.get(DAILY_QUESTIONS_VARIABLE, DEFAULT_DAILY_QUESTIONS)))
     build_app(cap).launch(
         theme=brand.THEME,
-        css=guide.terminal_css() + brand.CSS + dock.CSS,
-        head=brand.HEAD + dock.script(),
+        css=guide.terminal_css() + brand.CSS + dock.CSS + mobile.CSS,
+        head=brand.HEAD + dock.script() + mobile.script(PLACEHOLDER),
         favicon_path=str(brand.FAVICON),
         footer_links=["gradio"],
     )
