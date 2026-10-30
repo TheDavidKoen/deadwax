@@ -33,3 +33,9 @@ def brand_colour(name: str) -> str:
 def test_the_send_button_uses_the_themes_primary_colours():
     assert f"--dw-button: {brand_colour('INK')}" in mobile.CSS
     assert f"--dw-button: {brand_colour('GOLD_DARK')}" in mobile.CSS
+
+
+def test_behind_the_answer_is_built_open_so_desktop_always_shows_it():
+    app_source = (Path(__file__).parents[2] / "demo" / "app.py").read_text(encoding="utf-8")
+    assert 'gr.Accordion("Behind the answer", open=True' in app_source
+    assert 'behind.classList.contains("open")) behind.click()' in mobile.script("placeholder")
