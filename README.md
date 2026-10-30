@@ -7,13 +7,12 @@ questions about the tracks you have saved, and builds playlists against hard con
 with a deterministic validator, a repair loop, and an eval suite that reports pass *rates*
 rather than pass/fail.
 
-**[Try the live demo](https://deadwax.onrender.com)** — it runs on a fixed 100-track library, the same data the
+**[Try the live demo](https://deadwax-demo.onrender.com)** — it runs on a fixed 100-track library, the same data the
 eval suite grades. It is on a free server that sleeps when idle, so the first visit can take
 about a minute to wake it.
 
 Built as a portfolio piece demonstrating production LLM engineering practice: tool use,
-evaluation, tracing, retrieval, real data, an MCP server and a deployed demo, with the site
-and writeup still to come — see [build progress](#build-progress).
+evaluation, tracing, retrieval, real data, an MCP server and a deployed demo.
 
 ## The interesting part
 
@@ -63,33 +62,11 @@ Everything runs on a free tier. That is a hard constraint, not a preference.
 | Tracing | Langfuse |
 | Interop | Model Context Protocol server |
 | Site | Astro on Cloudflare Pages, static — [the one JavaScript component](docs/adr/0003-python-for-the-agent.md) |
-| Live demo | Gradio on a free [Render](https://deadwax.onrender.com) web service — [why not Hugging Face](docs/adr/0012-the-live-demo-runs-on-render.md) |
+| Live demo | Gradio on a free [Render](https://deadwax-demo.onrender.com) web service — [why not Hugging Face](docs/adr/0012-the-live-demo-runs-on-render.md) |
 
 Stages 0 through 2 use the standard library only — no framework, no SDK, no dependencies.
 The raw HTTP call is written by hand before any abstraction is introduced, so that when a
 framework misrepresents what it is doing, the difference is visible.
-
-## Build progress
-
-Twelve stages, four phases. Each stage lands as one or more squash-merged pull requests, so
-the history reads as the build actually happened.
-
-| Phase | Stage | Status |
-| --- | --- | --- |
-| A · Ground | 0 · One raw call | ✅ |
-| A · Ground | 1 · Fixture data | ✅ |
-| A · Ground | 2 · Deterministic core | ✅ |
-| B · The agent | 3 · First tool loop | ✅ |
-| B · The agent | 4 · Measure the wobble | ✅ |
-| B · The agent | 5 · Eval harness | ✅ `v0.5` |
-| C · Making it good | 6 · Repair loop | ✅ |
-| C · Making it good | 7 · Adversarial cases | ✅ |
-| C · Making it good | 8 · Tracing | ✅ |
-| C · Making it good | 9 · Retrieval | ✅ `v0.9` |
-| D · Ship | 10 · Real data | ✅ |
-| D · Ship | 11 · MCP server | ✅ |
-| D · Ship | 12a · Live demo | ✅ |
-| D · Ship | 12b · Site and writeup | ⬜ `v1.0` |
 
 ## Running it
 
@@ -189,7 +166,7 @@ travel — the repair-loop supervisor, the step limit, the citation check — is
 
 ### In the browser
 
-`demo/` is the Gradio app behind the [live demo](https://deadwax.onrender.com). Its dependencies are in a
+`demo/` is the Gradio app behind the [live demo](https://deadwax-demo.onrender.com). Its dependencies are in a
 separate `demo` group, so the package itself never installs Gradio. To run it locally:
 
 ```bash
@@ -209,9 +186,9 @@ turn's playlist. The eval cases are all single questions, so follow-ups are not 
 
 `render.yaml` deploys it to Render once CI passes on `main`, installing exactly the versions
 in `uv.lock`. The free service sleeps after 15 idle minutes, and while it sleeps nothing of it
-is running to say so. So the public link is a static page, `demo/wake/`, which never sleeps:
-it explains the wait, checks every few seconds whether the demo is up, and goes there the
-moment it is. Why the demo moved from Hugging Face, and what the move costs, is in
+is running to say so; Render shows its own loading page while it wakes. `demo/wake/` is a
+branded alternative, published as a separate static site that never sleeps: it explains the
+wait, checks every few seconds whether the demo is up, and goes there the moment it is. Why the demo moved from Hugging Face, and what the move costs, is in
 [ADR 0012](docs/adr/0012-the-live-demo-runs-on-render.md).
 
 ## Measuring variance
